@@ -8,7 +8,6 @@ HRX is a modern, full-stack Human Resource Management System (HRMS) designed to 
 
 - [Features](#features)
 - [Tech Stack](#tech-stack)
-- [Screenshots](#screenshots)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
