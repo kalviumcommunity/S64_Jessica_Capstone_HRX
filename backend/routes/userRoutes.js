@@ -8,10 +8,10 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(protect, authorizeRoles('admin', 'hr'), getAllUsers)
+  .get(getAllUsers)
 
 router
   .route('/:id')
-  .get(protect, getUserById)
+  .get(getUserById)
 
 export default router;
