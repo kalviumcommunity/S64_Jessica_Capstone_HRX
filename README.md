@@ -123,6 +123,8 @@ hrx/
 
 #### Render deployment link : https://s64-jessica-capstone-hrx.onrender.com
 
+#### Netlify deployment link : https://hr-hrx.netlify.app/
+
 ---
 
 ## 🤝 Contributing
