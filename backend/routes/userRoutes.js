@@ -3,6 +3,7 @@ import {
   getAllUsers,
   getUserById,
   createUser,
+  updateUser,
 } from '../controllers/userController.js';
 
 const router = express.Router();
@@ -15,5 +16,6 @@ router
 router
   .route('/:id')
   .get(getUserById)
+  .put(updateUser)
 
 export default router;
