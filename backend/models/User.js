@@ -1,36 +1,44 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
+    required: [true, 'Please add a name']
   },
   email: {
     type: String,
-    required: true,
-    unique: true,
+    required: [true, 'Please add an email'],
+    unique: true
   },
   password: {
     type: String,
-    required: true,
+    required: [true, 'Please add a password'],
     minlength: 6,
+    select: false
   },
   role: {
     type: String,
-    enum: ['hr', 'employee'],
-    default: 'employee',
+    enum: ['employee', 'hr', 'admin'],
+    default: 'employee'
   },
   department: String,
   jobTitle: String,
-  googleId: String,
-  twoFactorEnabled: {
-    type: Boolean,
-    default: false,
+  salary: Number,
+  bankDetails: {
+    accountNumber: String,
+    ifscCode: String,
   },
   createdAt: {
     type: Date,
-    default: Date.now,
+    default: Date.now
   }
+});
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
 });
 
 const User = mongoose.model('User', userSchema);
