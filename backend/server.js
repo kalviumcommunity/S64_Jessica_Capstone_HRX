@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
+import userRoutes from './routes/userRoutes';
 
 dotenv.config();
 const app = express();
@@ -11,6 +12,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 connectDB();
+
+app.use('/api/users', userRoutes);
 
 app.get('/', (req, res) => {
   res.send('HRX API is running...');
