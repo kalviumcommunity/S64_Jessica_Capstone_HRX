@@ -122,7 +122,6 @@ hrx/
 ## Deployment:
 
 #### Render deployment link : https://s64-jessica-capstone-hrx.onrender.com
-
 ---
 
 ## 🤝 Contributing
