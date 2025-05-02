@@ -1,34 +1,58 @@
-import User from '../models/User.js';
+const User = require('../models/User');
+const Employee = require('../models/Employee');
 
-export const getAllUsers = async (req, res) => {
-    const users = await User.find();
-    res.json(users);
-};
-  
-export const getUserById = async (req, res) => {
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json(user);
-};
+exports.register = async (req, res) => {
+  const { name, email, password, role } = req.body;
 
-export const createUser = async (req, res) => {
-    const { name, email, password, role } = req.body;
-  
+  try {
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ message: 'User already exists' });
-  
+
+    // Create user
     const user = await User.create({ name, email, password, role });
-    res.status(201).json(user);
+
+    // Create employee record for the user
+    await Employee.create({
+      name: user.name,
+      email: user.email,
+      createdBy: user._id
+    });
+
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      avatar: user.avatar,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-export const updateUser = async (req, res) => {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json(user);
-};
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
 
-export const deleteUser = async (req, res) => {
-    const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json({ message: 'User deleted successfully' });
+  try {
+    const user = await User.findOne({ email });
+
+    // For now, skip password verification since password logic has been removed
+    if (user) {
+      const employee = await Employee.findOne({ createdBy: user._id });
+
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+        employeeProfile: employee,
+      });
+    } else {
+      res.status(401).json({ message: 'Invalid email' });
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ message: error.message });
+  }
 };
