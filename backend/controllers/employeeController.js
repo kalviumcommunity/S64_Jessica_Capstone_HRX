@@ -1,5 +1,6 @@
 const Employee = require('../models/Employee');
 const User = require('../models/User');
+const Performance = require('../models/Performance');
 
 // Get employee by user ID
 exports.getEmployeeByUserId = async (req, res) => {
@@ -38,6 +39,26 @@ exports.getEmployeeById = async (req, res) => {
     const employee = await Employee.findById(req.params.id);
     if (!employee) return res.status(404).json({ message: 'Employee not found' });
     res.json(employee);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update employee
+exports.updateEmployee = async (req, res) => {
+  try {
+    const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(employee);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Delete employee (soft delete)
+exports.deleteEmployee = async (req, res) => {
+  try {
+    const employee = await Employee.findByIdAndUpdate(req.params.id, { isActive: false }, { new: true });
+    res.json({ message: 'Employee archived', employee });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

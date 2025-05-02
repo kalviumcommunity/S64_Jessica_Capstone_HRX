@@ -2,7 +2,9 @@ const express = require('express');
 const { 
   addEmployee, 
   getEmployees, 
-  getEmployeeById,
+  getEmployeeById, 
+  updateEmployee, 
+  deleteEmployee,
   getEmployeeByUserId,
   getAllEmployees,
   createEmployee,
@@ -24,6 +26,12 @@ router.post('/create-with-credentials', protect, createEmployeeWithCredentials);
 
 // Get employee by ID
 router.get('/:id', protect, getEmployeeById);
+
+// Update employee
+router.put('/:id', protect, updateEmployee);
+
+// Delete employee
+router.delete('/:id', protect, deleteEmployee);
 
 // Get employee by user ID
 router.get('/user/:id', protect, getEmployeeByUserId);
