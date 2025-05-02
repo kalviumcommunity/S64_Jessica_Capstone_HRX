@@ -1,22 +1,17 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 
-const userSchema = new mongoose.Schema({
+const employeeSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  role: { type: String, enum: ['admin', 'hr', 'employee'], default: 'employee' },
-  password: { type: String, required: true },
-  avatar: { type: String, default: '' },
-  // Personal info
   phone: { type: String },
   address: { type: String },
   dateOfBirth: { type: Date },
   gender: { type: String },
   emergencyContact: { type: String },
   emergencyPhone: { type: String },
-  // Professional info
   department: { type: String },
   position: { type: String },
+  jobRole: { type: String },
   joinDate: { type: Date },
   manager: { type: String },
   workLocation: { type: String },
@@ -24,21 +19,36 @@ const userSchema = new mongoose.Schema({
   workPhone: { type: String },
   education: { type: String },
   skills: { type: String },
-  // Bank info
+  salary: { type: Number },
   accountName: { type: String },
   accountNumber: { type: String },
   bankName: { type: String },
   branch: { type: String },
   ifscCode: { type: String },
   panCard: { type: String },
-  salary: { type: String },
   taxInformation: { type: String },
-  appPreferences: {
-    darkMode: { type: Boolean, default: false },
-    systemLanguage: { type: Boolean, default: true },
-    highContrast: { type: Boolean, default: false },
-    reducedMotion: { type: Boolean, default: false }
-  }
+  isActive: { type: Boolean, default: true },
+  avatar: { type: String, default: '' },
+  employmentHistory: [
+    {
+      role: String,
+      department: String,
+      from: Date,
+      to: Date,
+    }
+  ],
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false
+  },
+  employeeId: { type: String, unique: true, required: true },
+  role: { type: String, default: 'employee' },
+  status: { type: String, default: 'Active' },
 }, { timestamps: true });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('Employee', employeeSchema);
