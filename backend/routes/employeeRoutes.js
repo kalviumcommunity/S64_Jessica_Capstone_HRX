@@ -2,33 +2,34 @@ const express = require('express');
 const { 
   addEmployee, 
   getEmployees, 
-  getEmployeeById, 
+  getEmployeeById,
   getEmployeeByUserId,
   getAllEmployees,
   createEmployee,
   createEmployeeWithCredentials,
   getEmployeesForHR
 } = require('../controllers/employeeController');
+const { protect } = require('../middleware/authMiddleware');
 const Employee = require('../models/Employee');
 const router = express.Router();
 
 // Get all employees
-router.get('/', getEmployees);
+router.get('/', protect, getEmployees);
 
 // Create new employee
-router.post('/', addEmployee);
+router.post('/', protect, addEmployee);
 
 // Create employee with credentials
-router.post('/create-with-credentials', createEmployeeWithCredentials);
+router.post('/create-with-credentials', protect, createEmployeeWithCredentials);
 
 // Get employee by ID
-router.get('/:id', getEmployeeById);
+router.get('/:id', protect, getEmployeeById);
 
 // Get employee by user ID
-router.get('/user/:id', getEmployeeByUserId);
+router.get('/user/:id', protect, getEmployeeByUserId);
 
 // Get employee by user ID (createdBy)
-router.get('/by-user/:userId', async (req, res) => {
+router.get('/by-user/:userId', protect, async (req, res) => {
   try {
     console.log('Looking up employee for user:', req.params.userId);
     
