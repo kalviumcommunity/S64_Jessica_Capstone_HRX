@@ -36,8 +36,8 @@ exports.login = async (req, res) => {
   try {
     const user = await User.findOne({ email });
 
-    // For now, skip password verification since password logic has been removed
-    if (user) {
+    if (user && await user.matchPassword(password)) {
+      // Find the employee profile for this user
       const employee = await Employee.findOne({ createdBy: user._id });
 
       res.json({
@@ -46,10 +46,10 @@ exports.login = async (req, res) => {
         email: user.email,
         role: user.role,
         avatar: user.avatar,
-        employeeProfile: employee,
+        employeeProfile: employee, // Include the employee profile
       });
     } else {
-      res.status(401).json({ message: 'Invalid email' });
+      res.status(401).json({ message: 'Invalid email or password' });
     }
   } catch (error) {
     console.error('Login error:', error);
