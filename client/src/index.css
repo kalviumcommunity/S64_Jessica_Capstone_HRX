@@ -2,71 +2,145 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
+@layer base {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    --background: 0 0% 98%;
+    --foreground: 220 20% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 20%;
+
+    --primary: 172 100% 34%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 220 20% 20%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 220 20% 60%;
+
+    --accent: 0 0% 96%;
+    --accent-foreground: 220 20% 20%;
+
+    --destructive: 4 90% 58%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 220 20% 90%;
+    --input: 220 20% 90%;
+    --ring: 172 100% 34%;
+    --radius: 1rem;
   }
-  a:hover {
-    color: #747bff;
+
+  .dark {
+    --background: 220 20% 8%;
+    --foreground: 0 0% 98%;
+
+    --card: 220 20% 11%;
+    --card-foreground: 0 0% 98%;
+    --popover: 220 20% 11%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 172 100% 34%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 220 20% 14%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 220 20% 14%;
+    --muted-foreground: 220 20% 70%;
+
+    --accent: 220 20% 14%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 4 90% 58%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 220 20% 16%;
+    --input: 220 20% 16%;
+    --ring: 172 100% 34%;
+
+    /* Sidebar colors for dark mode */
+    --sidebar-background: 220 20% 6%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 172 100% 34%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 172 100% 28%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 172 100% 26%;
+    --sidebar-ring: 172 100% 34%;
   }
-  button {
-    background-color: #f9f9f9;
+
+  * {
+    @apply border-border;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased h-screen font-sans transition-colors duration-300;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted dark:bg-muted/20;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary rounded-full hover:bg-primary/90;
+  }
+}
+
+@layer components {
+  .hrms-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  .hrms-card {
+    @apply bg-card rounded-lg shadow-sm border border-border p-6 transition-colors;
+  }
+  .hrms-card-hover {
+    @apply hrms-card hover:shadow-md hover:border-secondary transition-colors;
+  }
+  .hrms-input {
+    @apply block w-full rounded-md border border-input bg-input shadow-sm focus:border-primary focus:ring-primary text-sm;
+  }
+  .hrms-label {
+    @apply block text-sm font-medium text-secondary-foreground mb-1;
+  }
+  .hrms-btn {
+    @apply inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors;
+  }
+  .hrms-btn-primary {
+    @apply hrms-btn bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary;
+  }
+  .hrms-btn-secondary {
+    @apply hrms-btn bg-secondary text-secondary-foreground border-secondary hover:bg-secondary/90 focus:ring-secondary;
+  }
+  .hrms-btn-danger {
+    @apply hrms-btn bg-destructive text-destructive-foreground hover:bg-destructive/90 focus:ring-destructive;
+  }
+  .hrms-btn-success {
+    @apply hrms-btn bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
+  }
+  .status-badge {
+    @apply text-xs font-bold px-2.5 py-0.5 rounded-full;
+  }
+  .status-badge-success {
+    @apply status-badge bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400;
+  }
+  .status-badge-warning {
+    @apply status-badge bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400;
+  }
+  .status-badge-danger {
+    @apply status-badge bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400;
+  }
+  .status-badge-info {
+    @apply status-badge bg-primary/20 text-primary-foreground dark:bg-primary/30;
   }
 }
