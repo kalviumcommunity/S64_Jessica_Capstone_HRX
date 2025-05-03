@@ -4,13 +4,14 @@ import { Clock, Calendar, Award, DollarSign, FileText, Loader2 } from 'lucide-re
 import { useAuth } from '@/hooks/useAuth';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '@/services/apiService';
 import { toast } from 'sonner';
 
 const EmployeeDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   
   // State for attendance
   const [clockedIn, setClockedIn] = useState(false);
@@ -51,29 +52,32 @@ const EmployeeDashboard = () => {
   });
   
   // Check if user is already clocked in today
+  const checkClockInStatus = async () => {
+    const employeeId = user?.employeeProfile?._id;
+    if (!employeeId) return;
+    try {
+      const today = new Date().toISOString().slice(0, 10);
+      const response = await api.get(`/attendance/employee/${employeeId}`);
+      // Find today's attendance record
+      const todayRecord = response.data.find(record => 
+        new Date(record.date).toISOString().slice(0, 10) === today
+      );
+      // If there's a record for today and no checkout time, user is clocked in
+      setClockedIn(todayRecord && !todayRecord.checkOut);
+    } catch (error) {
+      console.error('Error checking clock-in status:', error);
+    }
+  };
+  
   useEffect(() => {
-    const checkClockInStatus = async () => {
-      const employeeId = user?.employeeId || user?.employeeProfile?._id;
-      if (!employeeId) return;
-      
-      try {
-        const today = new Date().toISOString().slice(0, 10);
-        const response = await api.get(`/attendance/employee/${employeeId}`);
-        
-        // Find today's attendance record
-        const todayRecord = response.data.find(record => 
-          new Date(record.date).toISOString().slice(0, 10) === today
-        );
-        
-        // If there's a record for today and no checkout time, user is clocked in
-        setClockedIn(todayRecord && !todayRecord.checkOut);
-      } catch (error) {
-        console.error('Error checking clock-in status:', error);
-      }
-    };
-    
     checkClockInStatus();
   }, [user]);
+  
+  // Re-check clock-in status when navigating to this page
+  useEffect(() => {
+    checkClockInStatus();
+    // eslint-disable-next-line
+  }, [location.pathname]);
   
   // Fetch attendance data
   useEffect(() => {
@@ -298,22 +302,21 @@ const EmployeeDashboard = () => {
   
   // Handle clock in/out
   const handleClockInOut = async () => {
-    if (!user?._id) {
+    const employeeId = user?.employeeProfile?._id;
+    if (!employeeId) {
       toast.error('User information not available');
       return;
     }
-    
     try {
       if (clockedIn) {
         // Clock out
-        await api.post('/attendance/checkout', { employeeId: user._id });
+        await api.post('/attendance/checkout', { employeeId });
         toast.success('Clocked out successfully');
       } else {
         // Clock in
-        await api.post('/attendance/checkin', { employeeId: user._id });
+        await api.post('/attendance/checkin', { employeeId });
         toast.success('Clocked in successfully');
       }
-      
       // Toggle state after successful API call
       setClockedIn(!clockedIn);
     } catch (error) {
