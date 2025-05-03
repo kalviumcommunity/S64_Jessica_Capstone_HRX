@@ -18,37 +18,49 @@ exports.getProfileSettings = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
     
-    // Allow all users to access their own settings (no role check)
-    
-    // Find the employee associated with this user
-    let employee = await Employee.findOne({ createdBy: userId });
-    if (!employee) {
-      // Create a new employee record with default values
-      try {
-        employee = await Employee.create({
-          name: user.name,
-          email: user.email,
-          createdBy: userId,
-          employeeId: `EMP${Date.now()}` // Generate a unique employee ID
-        });
-      } catch (error) {
-        console.error('Error creating employee record:', error);
-        return res.status(500).json({ message: 'Error creating employee record' });
+    if (user.role === 'employee') {
+      // Employee: get from Employee model
+      let employee = await Employee.findOne({ createdBy: userId });
+      if (!employee) {
+        // Create a new employee record with default values
+        try {
+          employee = await Employee.create({
+            name: user.name,
+            email: user.email,
+            createdBy: userId,
+            employeeId: `EMP${Date.now()}`
+          });
+        } catch (error) {
+          console.error('Error creating employee record:', error);
+          return res.status(500).json({ message: 'Error creating employee record' });
+        }
       }
+      // Return combined profile data
+      return res.json({
+        name: user.name,
+        email: user.email,
+        phone: employee.phone || '',
+        department: employee.department || '',
+        position: employee.position || '',
+        joinDate: employee.joinDate || new Date(),
+        avatar: user.avatar || '',
+        role: user.role,
+        employeeId: employee.employeeId
+      });
+    } else {
+      // HR/admin: return from User model only
+      return res.json({
+        name: user.name,
+        email: user.email,
+        phone: user.phone || '',
+        department: user.department || '',
+        position: user.position || '',
+        joinDate: user.joinDate || '',
+        avatar: user.avatar || '',
+        role: user.role,
+        employeeId: user._id.toString()
+      });
     }
-    
-    // Return combined profile data
-    res.json({
-      name: user.name,
-      email: user.email,
-      phone: employee.phone || '',
-      department: employee.department || '',
-      position: employee.position || '',
-      joinDate: employee.joinDate || new Date(),
-      avatar: user.avatar || '',
-      role: user.role,
-      employeeId: employee.employeeId
-    });
   } catch (error) {
     console.error('Error in getProfileSettings:', error);
     res.status(500).json({ message: 'Internal server error', error: error.message });
