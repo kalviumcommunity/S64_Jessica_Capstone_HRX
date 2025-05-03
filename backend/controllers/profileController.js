@@ -218,7 +218,6 @@ exports.updateBankInfo = async (req, res) => {
           createdBy: userId
         });
       }
-      
       // Update employee fields
       employee.accountName = accountName;
       employee.accountNumber = accountNumber;
@@ -228,7 +227,6 @@ exports.updateBankInfo = async (req, res) => {
       employee.panCard = panCard;
       employee.salary = salary ? Number(salary) : null;
       employee.taxInformation = taxInformation;
-      
       try {
         await employee.save();
         res.json({ message: 'Bank information updated successfully' });
@@ -236,8 +234,25 @@ exports.updateBankInfo = async (req, res) => {
         console.error('Error saving employee:', error);
         res.status(400).json({ message: 'Error updating bank information', error: error.message });
       }
+    } else if (user.role === 'hr') {
+      // Update HR (User model) bank info
+      user.accountName = accountName;
+      user.accountNumber = accountNumber;
+      user.bankName = bankName;
+      user.branch = branch;
+      user.ifscCode = ifscCode;
+      user.panCard = panCard;
+      user.salary = salary ? Number(salary) : null;
+      user.taxInformation = taxInformation;
+      try {
+        await user.save();
+        res.json({ message: 'Bank information updated successfully (HR)' });
+      } catch (error) {
+        console.error('Error saving HR user:', error);
+        res.status(400).json({ message: 'Error updating bank information', error: error.message });
+      }
     } else {
-      res.status(403).json({ message: 'Only employees can update bank information' });
+      res.status(403).json({ message: 'Only employees and HR can update bank information' });
     }
   } catch (error) {
     console.error('Error in updateBankInfo:', error);
