@@ -81,85 +81,78 @@ const LeaveManagement = () => {
   });
   
   // Fetch leave balance
+  const fetchLeaveBalance = async () => {
+    if (!user?._id) return;
+    try {
+      setBalanceLoading(true);
+      const response = await api.get(`/leaves/balance/${user._id}`);
+      // Transform the data for display
+      const balanceData = [
+        { 
+          type: 'Annual Leave', 
+          used: response.data.annualUsed || 0, 
+          total: response.data.annualTotal || 20, 
+          remaining: response.data.annual || 0 
+        },
+        { 
+          type: 'Sick Leave', 
+          used: response.data.sickUsed || 0, 
+          total: response.data.sickTotal || 10, 
+          remaining: response.data.sick || 0 
+        },
+        { 
+          type: 'Personal Leave', 
+          used: response.data.personalUsed || 0, 
+          total: response.data.personalTotal || 5, 
+          remaining: response.data.personal || 0 
+        }
+      ];
+      setLeaveBalance(balanceData);
+      setBalanceError(null);
+    } catch (error) {
+      console.error('Error fetching leave balance:', error);
+      setBalanceError('Failed to fetch leave balance');
+    } finally {
+      setBalanceLoading(false);
+    }
+  };
+
+  // Fetch leave history
+  const fetchLeaveHistory = async () => {
+    if (!user?._id) return;
+    try {
+      setHistoryLoading(true);
+      const response = await api.get(`/leaves/employee/${user._id}`);
+      console.log('Leave history response:', response.data);
+      // Transform the data for display
+      const historyData = response.data.map(leave => {
+        const startDate = new Date(leave.startDate);
+        const endDate = new Date(leave.endDate);
+        const days = differenceInDays(endDate, startDate) + 1;
+        return {
+          id: leave._id,
+          type: leave.type,
+          startDate: format(startDate, 'yyyy-MM-dd'),
+          endDate: format(endDate, 'yyyy-MM-dd'),
+          status: leave.status,
+          days
+        };
+      });
+      setLeaveHistory(historyData);
+      setHistoryError(null);
+    } catch (error) {
+      console.error('Error fetching leave history:', error);
+      setHistoryError('Failed to fetch leave history');
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchLeaveBalance = async () => {
-      if (!user?._id) return;
-      
-      try {
-        setBalanceLoading(true);
-        const response = await api.get(`/leaves/balance/${user._id}`);
-        
-        // Transform the data for display
-        const balanceData = [
-          { 
-            type: 'Annual Leave', 
-            used: response.data.annualUsed || 0, 
-            total: response.data.annualTotal || 20, 
-            remaining: response.data.annual || 0 
-          },
-          { 
-            type: 'Sick Leave', 
-            used: response.data.sickUsed || 0, 
-            total: response.data.sickTotal || 10, 
-            remaining: response.data.sick || 0 
-          },
-          { 
-            type: 'Personal Leave', 
-            used: response.data.personalUsed || 0, 
-            total: response.data.personalTotal || 5, 
-            remaining: response.data.personal || 0 
-          }
-        ];
-        
-        setLeaveBalance(balanceData);
-        setBalanceError(null);
-      } catch (error) {
-        console.error('Error fetching leave balance:', error);
-        setBalanceError('Failed to fetch leave balance');
-      } finally {
-        setBalanceLoading(false);
-      }
-    };
-    
     fetchLeaveBalance();
   }, [user]);
-  
-  // Fetch leave history
+
   useEffect(() => {
-    const fetchLeaveHistory = async () => {
-      if (!user?._id) return;
-      
-      try {
-        setHistoryLoading(true);
-        const response = await api.get(`/leaves/employee/${user._id}`);
-        console.log('Leave history response:', response.data);
-        
-        // Transform the data for display
-        const historyData = response.data.map(leave => {
-          const startDate = new Date(leave.startDate);
-          const endDate = new Date(leave.endDate);
-          const days = differenceInDays(endDate, startDate) + 1;
-          
-          return {
-            id: leave._id,
-            type: leave.type,
-            startDate: format(startDate, 'yyyy-MM-dd'),
-            endDate: format(endDate, 'yyyy-MM-dd'),
-            status: leave.status,
-            days
-          };
-        });
-        
-        setLeaveHistory(historyData);
-        setHistoryError(null);
-      } catch (error) {
-        console.error('Error fetching leave history:', error);
-        setHistoryError('Failed to fetch leave history');
-      } finally {
-        setHistoryLoading(false);
-      }
-    };
-    
     fetchLeaveHistory();
   }, [user]);
 
@@ -187,13 +180,19 @@ const LeaveManagement = () => {
         toast.success("Leave application submitted successfully!");
         setShowForm(false);
         form.reset();
-        // Only refresh after backend confirms save
+        // Refresh the data
         await fetchLeaveHistory();
         await fetchLeaveBalance();
-      } else {
-        toast.error('Failed to submit leave application');
       }
     } catch (error) {
+      console.error('Error submitting leave:', error);
+      if (error.response) {
+        console.error('Backend response:', error.response);
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+      } else {
+        console.error('Error setting up request:', error.message);
+      }
       const errorMessage = error.response?.data?.message || 'Failed to submit leave application';
       toast.error(errorMessage);
     } finally {
