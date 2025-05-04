@@ -27,12 +27,6 @@ exports.uploadDocument = async (req, res) => {
       });
     }
     
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = path.join(__dirname, '../uploads');
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-    
     // Handle multiple files
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: 'No files uploaded' });
@@ -41,10 +35,9 @@ exports.uploadDocument = async (req, res) => {
     // Create document records for each file
     const documents = [];
     for (const file of req.files) {
-      const fileUrl = `/uploads/${file.filename}`;
       const docData = {
         title: title || file.originalname,
-        fileUrl,
+        fileUrl: file.path, // Cloudinary URL
         uploadedBy: userId,
         category: category || 'personal'
       };
@@ -217,44 +210,13 @@ exports.viewDocument = async (req, res) => {
 
 exports.downloadDocument = async (req, res) => {
   try {
-    // Get user data
-    const userId = req.user._id;
-    
-    // Get employee data or create if it doesn't exist
-    let employee = await Employee.findOne({ createdBy: userId });
-    if (!employee) {
-      // Get user data
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      
-      // Create a new employee record with default values
-      employee = await Employee.create({
-        name: user.name,
-        email: user.email,
-        createdBy: userId
-      });
-    }
-    
     const document = await Document.findById(req.params.id);
     if (!document) {
       return res.status(404).json({ message: 'Document not found' });
     }
     
-    // Get the filename from the fileUrl
-    const filename = document.fileUrl.split('/').pop();
-    
-    // Create the absolute path to the file
-    const filePath = path.join(__dirname, '../uploads', filename);
-    
-    // Check if the file exists
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ message: 'File not found on server' });
-    }
-    
-    // Send the file
-    res.download(filePath, document.title || filename);
+    // Redirect to Cloudinary URL for download
+    res.redirect(document.fileUrl);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -266,11 +228,12 @@ exports.deleteDocument = async (req, res) => {
     if (!document) {
       return res.status(404).json({ message: 'Document not found' });
     }
-    // Delete the file from the filesystem
-    const filePath = path.join(__dirname, '../uploads', document.fileUrl.split('/').pop());
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
+    
+    // Delete the file from Cloudinary
+    const cloudinary = require('../config/cloudinary');
+    const publicId = document.fileUrl.split('/').pop().split('.')[0];
+    await cloudinary.uploader.destroy(`hrx/${publicId}`);
+    
     await document.deleteOne();
     res.json({ message: 'Document deleted successfully' });
   } catch (error) {

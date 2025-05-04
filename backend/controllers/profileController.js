@@ -287,20 +287,17 @@ exports.uploadAvatar = async (req, res) => {
       });
     }
     
-    // Create avatar URL
-    const avatarUrl = `/uploads/${req.file.filename}`;
-    
-    // Update employee with avatar URL
-    employee.avatar = avatarUrl;
+    // Update employee with Cloudinary URL
+    employee.avatar = req.file.path;
     await employee.save();
     
-    // Also update the user record with the avatar URL
-    user.avatar = avatarUrl;
+    // Also update the user record with the Cloudinary URL
+    user.avatar = req.file.path;
     await user.save();
     
     res.json({ 
       message: 'Avatar uploaded successfully',
-      avatarUrl: avatarUrl
+      avatarUrl: req.file.path
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
