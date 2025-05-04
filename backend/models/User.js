@@ -2,12 +2,13 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
+  // Core authentication fields
   name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  role: { type: String, enum: ['admin', 'hr', 'employee'], default: 'employee' },
+  email: { type: String, required: true, unique: true, index: true },
+  role: { type: String, enum: ['admin', 'hr', 'employee'], default: 'employee', index: true },
   password: { type: String, required: true },
   avatar: { type: String, default: '' },
-  // Personal info
+  // Basic profile info
   phone: { type: String },
   address: { type: String },
   dateOfBirth: { type: Date },
@@ -15,7 +16,7 @@ const userSchema = new mongoose.Schema({
   emergencyContact: { type: String },
   emergencyPhone: { type: String },
   // Professional info
-  department: { type: String },
+  department: { type: String, index: true },
   position: { type: String },
   joinDate: { type: Date },
   manager: { type: String },
@@ -33,13 +34,25 @@ const userSchema = new mongoose.Schema({
   panCard: { type: String },
   salary: { type: String },
   taxInformation: { type: String },
+  // App preferences
   appPreferences: {
     darkMode: { type: Boolean, default: false },
     systemLanguage: { type: Boolean, default: true },
     highContrast: { type: Boolean, default: false },
     reducedMotion: { type: Boolean, default: false }
   }
-}, { timestamps: true });
+}, { 
+  timestamps: true,
+  toJSON: {
+    transform: function(doc, ret) {
+      delete ret.password;
+      return ret;
+    }
+  }
+});
+
+// Create indexes
+userSchema.index({ email: 1, role: 1 });
 
 // Password Hashing
 userSchema.pre('save', async function (next) {
@@ -48,8 +61,8 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// Password Match
-userSchema.methods.matchPassword = async function (enteredPassword) {
+// Method to match password
+userSchema.methods.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
