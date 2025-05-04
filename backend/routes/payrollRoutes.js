@@ -9,7 +9,9 @@ const {
   downloadPayslip,
   getAllCurrentPayroll,
   getAllPayrollHistory,
-  getPayrollStats
+  getPayrollStats,
+  getPayrollSettings,
+  updatePayrollSettings
 } = require('../controllers/payrollController');
 
 const { protect } = require('../middleware/authMiddleware');
@@ -23,5 +25,7 @@ router.route('/:id/download').get(protect, downloadPayslip);
 router.get('/current', protect, getAllCurrentPayroll);
 router.get('/history', protect, getAllPayrollHistory);
 router.get('/stats', protect, getPayrollStats);
+router.get('/settings', protect, getPayrollSettings);
+router.put('/settings', protect, updatePayrollSettings);
 
 module.exports = router;

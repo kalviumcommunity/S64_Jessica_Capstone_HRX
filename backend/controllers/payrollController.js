@@ -462,9 +462,111 @@ exports.getAllCurrentPayroll = async (req, res) => {
 // Admin: Get payroll history (all payrolls)
 exports.getAllPayrollHistory = async (req, res) => {
   try {
-    const payrolls = await Payroll.find();
-    res.json(payrolls);
+    const payrolls = await Payroll.find()
+      .populate('employee', 'name email position department')
+      .sort({ payPeriodEnd: -1 });
+    
+    // Format the response
+    const formattedPayrolls = payrolls.map(payroll => ({
+      _id: payroll._id,
+      employee: {
+        name: payroll.employee?.name || 'Unknown',
+        position: payroll.employee?.position || 'N/A',
+        department: payroll.employee?.department || 'N/A'
+      },
+      periodStart: payroll.payPeriodEnd,
+      periodEnd: payroll.payPeriodEnd,
+      processedDate: payroll.paymentDate,
+      totalAmount: payroll.netPay,
+      status: payroll.status,
+      month: payroll.month,
+      year: payroll.year
+    }));
+    
+    res.json(formattedPayrolls);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error fetching payroll history:', error);
+    res.status(500).json({ message: 'Failed to fetch payroll history' });
+  }
+};
+
+// Admin: Get payroll settings
+exports.getPayrollSettings = async (req, res) => {
+  try {
+    // In a real application, these would be stored in a database
+    // For now, we'll return default settings
+    res.json({
+      defaultPayDay: 'last-working-day',
+      taxCalculationMethod: 'progressive',
+      emailTemplate: 'standard',
+      workingDaysPerMonth: 22,
+      overtimeRate: 1.5,
+      taxBrackets: [
+        { min: 0, max: 10000, rate: 0.1 },
+        { min: 10001, max: 30000, rate: 0.15 },
+        { min: 30001, max: 50000, rate: 0.2 },
+        { min: 50001, max: Infinity, rate: 0.25 }
+      ]
+    });
+  } catch (error) {
+    console.error('Error fetching payroll settings:', error);
+    res.status(500).json({ message: 'Failed to fetch payroll settings' });
+  }
+};
+
+// Admin: Update payroll settings
+exports.updatePayrollSettings = async (req, res) => {
+  try {
+    const { defaultPayDay, taxCalculationMethod, emailTemplate, workingDaysPerMonth, overtimeRate, taxBrackets } = req.body;
+    
+    // In a real application, these would be saved to a database
+    // For now, we'll just validate and return success
+    
+    // Validate settings
+    if (!['last-working-day', '15th', '30th'].includes(defaultPayDay)) {
+      return res.status(400).json({ message: 'Invalid default pay day' });
+    }
+    
+    if (!['progressive', 'flat', 'custom'].includes(taxCalculationMethod)) {
+      return res.status(400).json({ message: 'Invalid tax calculation method' });
+    }
+    
+    if (!['standard', 'detailed', 'custom'].includes(emailTemplate)) {
+      return res.status(400).json({ message: 'Invalid email template' });
+    }
+    
+    if (workingDaysPerMonth < 1 || workingDaysPerMonth > 31) {
+      return res.status(400).json({ message: 'Invalid working days per month' });
+    }
+    
+    if (overtimeRate < 1) {
+      return res.status(400).json({ message: 'Invalid overtime rate' });
+    }
+    
+    if (!Array.isArray(taxBrackets) || taxBrackets.length === 0) {
+      return res.status(400).json({ message: 'Invalid tax brackets' });
+    }
+    
+    // Validate tax brackets
+    for (let i = 0; i < taxBrackets.length; i++) {
+      const bracket = taxBrackets[i];
+      if (!bracket.min || !bracket.max || !bracket.rate) {
+        return res.status(400).json({ message: 'Invalid tax bracket format' });
+      }
+      if (bracket.min > bracket.max) {
+        return res.status(400).json({ message: 'Invalid tax bracket range' });
+      }
+      if (bracket.rate < 0 || bracket.rate > 1) {
+        return res.status(400).json({ message: 'Invalid tax rate' });
+      }
+      if (i > 0 && bracket.min !== taxBrackets[i-1].max + 1) {
+        return res.status(400).json({ message: 'Tax brackets must be continuous' });
+      }
+    }
+    
+    res.json({ message: 'Payroll settings updated successfully' });
+  } catch (error) {
+    console.error('Error updating payroll settings:', error);
+    res.status(500).json({ message: 'Failed to update payroll settings' });
   }
 };
