@@ -99,7 +99,7 @@ const AppSidebar = () => {
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8">
               <AvatarImage 
-                src={getFileUrl(user?.avatar)} 
+                src={user?.avatar ? getFileUrl(user.avatar) : '/placeholder.svg'} 
                 alt={user?.name} 
               />
               <AvatarFallback>

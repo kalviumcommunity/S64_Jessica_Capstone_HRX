@@ -399,7 +399,7 @@ const SettingsPage = () => {
                 <div className="flex flex-col items-center space-y-2">
                   <Avatar className="h-24 w-24">
                     <AvatarImage 
-                      src={getFileUrl(user?.avatar)} 
+                      src={user?.avatar ? getFileUrl(user.avatar) : '/placeholder.svg'} 
                       alt={profile.name} 
                       onError={(e) => { e.target.onerror = null; e.target.src = "/placeholder.svg"; }}
                     />

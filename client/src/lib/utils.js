@@ -19,20 +19,25 @@ export function cn(...inputs) {
 export function getFileUrl(url) {
   // If the URL is null, undefined, or empty, return a default avatar
   if (!url) return '/placeholder.svg';
-  
+
+  // Remove accidental 'undefined' prefix if present
+  if (url.startsWith('undefined')) {
+    url = url.replace('undefined', '');
+  }
+
   // If the URL starts with http:// or https://, it's already a full URL
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url;
   }
-  
+
   // Get the base URL without /api
   const baseUrl = API_URL.replace('/api', '');
-  
+
   // If the URL starts with a slash, append it to the base URL
   if (url.startsWith('/')) {
     return `${baseUrl}${url}`;
   }
-  
+
   // Otherwise, treat it as a relative path
   return `${baseUrl}/${url}`;
 }
