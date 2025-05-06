@@ -33,6 +33,7 @@ import Documents from "./pages/employee/Documents";
 import AdminDocuments from "./pages/admin/Documents";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
+import RoleSelectionPage from "./pages/RoleSelection";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
                 {/* Public routes */}
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/role-selection" element={<RoleSelectionPage />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
                 
