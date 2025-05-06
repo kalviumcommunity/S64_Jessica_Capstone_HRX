@@ -39,9 +39,11 @@ const LandingPage = () => {
                     Login
                   </Button>
                 </Link>
-                <Button variant="outline" className="gap-2 px-8 py-3 rounded-md text-lg">
-                  Request Demo
-                </Button>
+                <Link to="/contact">
+                  <Button variant="outline" className="gap-2 px-8 py-3 rounded-md text-lg border-primary text-primary hover:bg-primary/10">
+                    Request Demo
+                  </Button>
+                </Link>
               </div>
             </div>
             <div className="lg:w-1/2">
@@ -299,14 +301,16 @@ const LandingPage = () => {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link to="/login">
-              <Button className="gap-2 bg-white text-primary hover:bg-gray-100 px-8 py-3 rounded-md text-lg">
+              <Button className="flex items-center gap-2 bg-white text-primary font-semibold px-8 py-3 rounded-full text-lg shadow-lg transition transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-gray-100 hover:shadow-xl">
                 <LogInIcon size={20} />
                 Login Now
               </Button>
             </Link>
-            <Button variant="outline" className="gap-2 px-8 py-3 rounded-md text-lg border-white text-white hover:bg-white/10">
-              Contact Sales
-            </Button>
+            <Link to="/contact">
+              <Button className="flex items-center gap-2 border-2 border-white text-white font-semibold px-8 py-3 rounded-full text-lg bg-transparent transition transform hover:scale-105 hover:bg-white hover:text-primary hover:shadow-xl">
+                Contact Us
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -366,7 +370,7 @@ const LandingPage = () => {
               &copy; {new Date().getFullYear()} HRX. All rights reserved.
             </span>
             <span>
-              Made with <span className="text-red-400">❤️</span> by Jessica Agarwal
+              Made with <span className="text-red-400">❤</span> by Jessica Agarwal
             </span>
           </div>
         </div>

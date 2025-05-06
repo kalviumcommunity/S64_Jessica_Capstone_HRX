@@ -34,6 +34,7 @@ import AdminDocuments from "./pages/admin/Documents";
 import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import RoleSelectionPage from "./pages/RoleSelection";
+import Contact from "./pages/Contact";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +90,9 @@ const App = () => (
                   <Route path="documents" element={<Documents />} />
                   <Route path="settings" element={<Settings />} />
                 </Route>
+                
+                {/* Contact Us route */}
+                <Route path="/contact" element={<Contact />} />
                 
                 {/* Catch-all route */}
                 <Route path="*" element={<NotFound />} />
