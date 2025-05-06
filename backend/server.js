@@ -38,8 +38,20 @@ app.use((req, res, next) => {
 
 connectDB();
 
+// ✅ Updated CORS: use array instead of Set
+const allowedOrigins = [
+  'https://hr-hrx.netlify.app',
+  'http://localhost:8080',
+];
+
 app.use(cors({
-  origin: 'https://hr-hrx.netlify.app',
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`Not allowed by CORS: ${origin}`));
+    }
+  },
   credentials: true
 }));
 

@@ -6,7 +6,9 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true, index: true },
   role: { type: String, enum: ['admin', 'hr', 'employee'], default: 'employee', index: true },
-  password: { type: String, required: true },
+  password: { type: String, required: false },
+  googleId: { type: String, unique: true, sparse: true },
+  photoURL: { type: String },
   avatar: { type: String, default: '' },
   // Basic profile info
   phone: { type: String },
@@ -54,9 +56,9 @@ const userSchema = new mongoose.Schema({
 // Create indexes
 userSchema.index({ email: 1, role: 1 });
 
-// Password Hashing
+// Password Hashing - Only hash if password exists
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password') || !this.password) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });

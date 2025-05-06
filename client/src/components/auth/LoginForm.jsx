@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -19,6 +19,8 @@ import { Separator } from '@/components/ui/separator';
 import { useAppDispatch } from '@/redux/hooks';
 import { setCredentials } from '@/redux/authSlice';
 import GoogleIcon from '@/components/common/GoogleIcon';
+import { signInWithGoogle } from '@/Firebase';
+import api from '@/services/apiService';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -26,10 +28,11 @@ const loginSchema = z.object({
 });
 
 const LoginForm = () => {
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, fetchEmployeeIdAndSetUser } = useAuth();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  
+  const [googleLoading, setGoogleLoading] = useState(false);
+
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -41,9 +44,6 @@ const LoginForm = () => {
   const onSubmit = async (data) => {
     try {
       const user = await login(data.email, data.password);
-      // The login function in useAuth already dispatches the setCredentials action
-      // with the user and token from the API response, so we don't need to do it here
-      
       if (user) {
         if (user.role === 'admin' || user.role === 'hr') {
           navigate('/admin/dashboard');
@@ -53,12 +53,37 @@ const LoginForm = () => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      // Error is already handled by the useAuth hook with toast notifications
     }
   };
 
-  const handleGoogleSignIn = () => {
-    toast.info('Google Sign-In coming soon!');
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    try {
+      const userData = await signInWithGoogle();
+      const response = await api.post('/auth/google/check', {
+        email: userData.email,
+        uid: userData.uid,
+      });
+      const data = response.data;
+      if (data && data.role) {
+        const mergedUser = fetchEmployeeIdAndSetUser
+          ? await fetchEmployeeIdAndSetUser(data, data.token)
+          : data;
+        if (mergedUser.role === 'admin' || mergedUser.role === 'hr') {
+          navigate('/admin/dashboard');
+        } else {
+          navigate('/employee/dashboard');
+        }
+      } else {
+        sessionStorage.setItem('googleUser', JSON.stringify(userData));
+        navigate('/role-selection');
+      }
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      toast.error('Failed to sign in with Google. Please try again.');
+    } finally {
+      setGoogleLoading(false);
+    }
   };
 
   return (
@@ -68,6 +93,11 @@ const LoginForm = () => {
         <p className="text-sm text-muted-foreground">
           Enter your credentials to sign in to your account
         </p>
+      </div>
+      <div className="mb-4 text-center">
+        <Link to="/" className="text-hrms-blue hover:underline font-medium">
+          ← Back to Home
+        </Link>
       </div>
 
       <Form {...form}>
@@ -132,9 +162,14 @@ const LoginForm = () => {
         variant="outline"
         className="w-full flex items-center justify-center gap-2"
         onClick={handleGoogleSignIn}
+        disabled={googleLoading}
       >
-        <GoogleIcon className="h-5 w-5" />
-        Sign in with Google
+        {googleLoading ? 'Signing in...' : (
+          <>
+            <GoogleIcon className="h-5 w-5" />
+            Sign in with Google
+          </>
+        )}
       </Button>
       
       <div className="mt-4 text-center text-sm">
