@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import api from '@/services/apiService';
 
 const Contact = () => {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
@@ -12,19 +13,28 @@ const Contact = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    setTimeout(() => {
-      toast.success('Your message has been sent!');
-      setForm({ name: '', email: '', message: '' });
+
+    try {
+      const response = await api.post('/contact/submit', form);
+      
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setForm({ name: '', email: '', message: '' });
+      }
+    } catch (error) {
+      console.error('Contact form submission error:', error);
+      toast.error(error.response?.data?.message || 'Failed to send message. Please try again.');
+    } finally {
       setSubmitting(false);
-    }, 1000);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-lg bg-white rounded-xl shadow p-8">
+      <div className="w-full max-w-md">
         <div className="mb-4 text-center">
           <Link to="/" className="text-primary hover:underline font-medium">
             ← Back to Home
@@ -65,7 +75,11 @@ const Contact = () => {
               required
             />
           </div>
-          <Button type="submit" className="w-full" disabled={submitting}>
+          <Button 
+            type="submit" 
+            className="w-full" 
+            disabled={submitting}
+          >
             {submitting ? 'Sending...' : 'Send Message'}
           </Button>
         </form>
