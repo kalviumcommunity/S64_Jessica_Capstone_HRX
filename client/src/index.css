@@ -78,11 +78,17 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased h-screen font-sans transition-colors duration-300;
+    @apply bg-background text-foreground antialiased h-screen font-sans transition-all duration-300;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Enhanced transitions for all interactive elements */
+  button, a, input, select, textarea {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  /* Modern scrollbar styling */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -93,54 +99,260 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-primary rounded-full hover:bg-primary/90;
+    @apply bg-primary rounded-full hover:bg-primary/90 transition-all duration-300;
   }
 }
 
 @layer components {
+  /* Enhanced container with gradient border */
   .hrms-container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative;
   }
+
+  /* Enhanced card with glass effect */
   .hrms-card {
-    @apply bg-card rounded-lg shadow-sm border border-border p-6 transition-colors;
+    @apply bg-card/80 backdrop-blur-sm rounded-lg shadow-sm border border-border/50 p-6 
+           transition-all duration-300 ease-out hover:shadow-lg hover:border-primary/20;
   }
+
   .hrms-card-hover {
-    @apply hrms-card hover:shadow-md hover:border-secondary transition-colors;
+    @apply hrms-card hover:shadow-xl hover:border-primary/30 hover:scale-[1.02] 
+           transform transition-all duration-300 hover:bg-card/90;
   }
+
+  /* Enhanced input with focus animation */
   .hrms-input {
-    @apply block w-full rounded-md border border-input bg-input shadow-sm focus:border-primary focus:ring-primary text-sm;
+    @apply block w-full rounded-md border border-input bg-input/50 backdrop-blur-sm 
+           shadow-sm focus:border-primary focus:ring-primary text-sm
+           transition-all duration-300 ease-out
+           hover:border-primary/50 focus:scale-[1.02] transform
+           focus:shadow-lg focus:shadow-primary/10;
   }
+
   .hrms-label {
-    @apply block text-sm font-medium text-secondary-foreground mb-1;
+    @apply block text-sm font-medium text-secondary-foreground mb-1 
+           transition-colors duration-300;
   }
+
+  /* Enhanced button animations */
   .hrms-btn {
-    @apply inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors;
+    @apply inline-flex items-center px-4 py-2 border border-transparent rounded-md 
+           shadow-sm text-sm font-semibold focus:outline-none focus:ring-2 
+           focus:ring-offset-2 transition-all duration-300 ease-out
+           hover:scale-[1.02] active:scale-[0.98] transform
+           hover:shadow-lg hover:shadow-primary/10;
   }
+
   .hrms-btn-primary {
-    @apply hrms-btn bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary;
+    @apply hrms-btn bg-primary text-primary-foreground hover:bg-primary/90 
+           focus:ring-primary hover:shadow-md hover:shadow-primary/20;
   }
+
   .hrms-btn-secondary {
-    @apply hrms-btn bg-secondary text-secondary-foreground border-secondary hover:bg-secondary/90 focus:ring-secondary;
+    @apply hrms-btn bg-secondary text-secondary-foreground border-secondary 
+           hover:bg-secondary/90 focus:ring-secondary hover:shadow-md;
   }
+
   .hrms-btn-danger {
-    @apply hrms-btn bg-destructive text-destructive-foreground hover:bg-destructive/90 focus:ring-destructive;
+    @apply hrms-btn bg-destructive text-destructive-foreground hover:bg-destructive/90 
+           focus:ring-destructive hover:shadow-md hover:shadow-destructive/20;
   }
+
   .hrms-btn-success {
-    @apply hrms-btn bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
+    @apply hrms-btn bg-green-600 text-white hover:bg-green-700 
+           focus:ring-green-500 hover:shadow-md hover:shadow-green-500/20;
   }
+
+  /* Enhanced status badges */
   .status-badge {
-    @apply text-xs font-bold px-2.5 py-0.5 rounded-full;
+    @apply text-xs font-bold px-2.5 py-0.5 rounded-full transition-all duration-300
+           hover:scale-105 transform;
   }
+
   .status-badge-success {
-    @apply status-badge bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400;
+    @apply status-badge bg-green-100 text-green-800 dark:bg-green-900/30 
+           dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/40
+           hover:shadow-md hover:shadow-green-500/20;
   }
+
   .status-badge-warning {
-    @apply status-badge bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400;
+    @apply status-badge bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 
+           dark:text-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-900/40
+           hover:shadow-md hover:shadow-yellow-500/20;
   }
+
   .status-badge-danger {
-    @apply status-badge bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400;
+    @apply status-badge bg-red-100 text-red-800 dark:bg-red-900/30 
+           dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/40
+           hover:shadow-md hover:shadow-red-500/20;
   }
+
   .status-badge-info {
-    @apply status-badge bg-primary/20 text-primary-foreground dark:bg-primary/30;
+    @apply status-badge bg-primary/20 text-primary-foreground dark:bg-primary/30 
+           hover:bg-primary/30 dark:hover:bg-primary/40
+           hover:shadow-md hover:shadow-primary/20;
   }
+
+  /* Enhanced animation classes */
+  .fade-in {
+    @apply animate-[fadeIn_0.5s_ease-out];
+  }
+
+  .slide-up {
+    @apply animate-[slideUp_0.6s_ease-out];
+  }
+
+  .slide-in-right {
+    @apply animate-[slideInRight_0.6s_ease-out];
+  }
+
+  .scale-in {
+    @apply animate-[scaleIn_0.5s_ease-out];
+  }
+
+  /* New animation classes */
+  .float {
+    @apply animate-[float_3s_ease-in-out_infinite];
+  }
+
+  .pulse-soft {
+    @apply animate-[pulseSoft_2s_ease-in-out_infinite];
+  }
+
+  .bounce-soft {
+    @apply animate-[bounceSoft_2s_ease-in-out_infinite];
+  }
+
+  .glow {
+    @apply animate-[glow_2s_ease-in-out_infinite];
+  }
+
+  .shimmer {
+    @apply relative overflow-hidden;
+  }
+
+  .shimmer::after {
+    content: '';
+    @apply absolute inset-0 -translate-x-full animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent;
+  }
+
+  /* Glass effect */
+  .glass {
+    @apply bg-white/10 backdrop-blur-lg border border-white/20 shadow-lg;
+  }
+
+  .glass-dark {
+    @apply bg-black/10 backdrop-blur-lg border border-white/10 shadow-lg;
+  }
+}
+
+/* Enhanced animations */
+@keyframes fadeIn {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from { 
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from { 
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* New animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulseSoft {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes bounceSoft {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px theme('colors.primary.DEFAULT');
+  }
+  50% {
+    box-shadow: 0 0 20px theme('colors.primary.DEFAULT');
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Page transition animations */
+.page-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 300ms, transform 300ms;
 }

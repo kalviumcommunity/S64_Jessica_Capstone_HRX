@@ -11,6 +11,7 @@ import ProtectedRoute from "@/components/routes/ProtectedRoute";
 import AdminRoute from "@/components/routes/AdminRoute";
 import EmployeeRoute from "@/components/routes/EmployeeRoute";
 import AppLayout from "@/components/layout/AppLayout";
+import SharedLayout from "@/components/layout/SharedLayout";
 
 // Pages
 import LandingPage from "./pages/LandingPage";
@@ -48,54 +49,54 @@ const App = () => (
           <BrowserRouter>
             <AuthProvider>
               <Routes>
-                {/* Public routes */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/role-selection" element={<RoleSelectionPage />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/unauthorized" element={<Unauthorized />} />
-                
-                {/* Root redirect based on role */}
-                <Route path="/dashboard" element={
-                  <ProtectedRoute>
-                    {({ user }) => 
-                      user?.role === 'hr' || user?.role === 'admin' ? 
-                        <Navigate to="/admin/dashboard" replace /> : 
-                        <Navigate to="/employee/dashboard" replace />
-                    }
-                  </ProtectedRoute>
-                } />
-                
-                {/* Admin/HR Routes */}
-                <Route path="/admin" element={<AdminRoute><AppLayout /></AdminRoute>}>
-                  <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="employees" element={<Employees />} />
-                  <Route path="leaves" element={<AdminLeaves />} />
-                  <Route path="payroll" element={<AdminPayroll />} />
-                  <Route path="performance" element={<AdminPerformance />} />
-                  <Route path="attendance" element={<AdminAttendance />} />
-                  <Route path="documents" element={<AdminDocuments />} />
-                  <Route path="settings" element={<Settings />} />
-                  <Route path="profile" element={<Profile />} />
+                <Route element={<SharedLayout />}>
+                  {/* Public routes */}
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/role-selection" element={<RoleSelectionPage />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route path="/unauthorized" element={<Unauthorized />} />
+                  <Route path="/contact" element={<Contact />} />
+                  
+                  {/* Root redirect based on role */}
+                  <Route path="/dashboard" element={
+                    <ProtectedRoute>
+                      {({ user }) => 
+                        user?.role === 'hr' || user?.role === 'admin' ? 
+                          <Navigate to="/admin/dashboard" replace /> : 
+                          <Navigate to="/employee/dashboard" replace />
+                      }
+                    </ProtectedRoute>
+                  } />
+                  
+                  {/* Admin/HR Routes */}
+                  <Route path="/admin" element={<AdminRoute><AppLayout /></AdminRoute>}>
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="employees" element={<Employees />} />
+                    <Route path="leaves" element={<AdminLeaves />} />
+                    <Route path="payroll" element={<AdminPayroll />} />
+                    <Route path="performance" element={<AdminPerformance />} />
+                    <Route path="attendance" element={<AdminAttendance />} />
+                    <Route path="documents" element={<AdminDocuments />} />
+                    <Route path="settings" element={<Settings />} />
+                    <Route path="profile" element={<Profile />} />
+                  </Route>
+                  
+                  {/* Employee Routes */}
+                  <Route path="/employee" element={<EmployeeRoute><AppLayout /></EmployeeRoute>}>
+                    <Route path="dashboard" element={<EmployeeDashboard />} />
+                    <Route path="profile" element={<Profile />} />
+                    <Route path="leave" element={<LeaveManagement />} />
+                    <Route path="attendance" element={<Attendance />} />
+                    <Route path="payroll" element={<Payroll />} />
+                    <Route path="performance" element={<Performance />} />
+                    <Route path="documents" element={<Documents />} />
+                    <Route path="settings" element={<Settings />} />
+                  </Route>
+                  
+                  {/* Catch-all route */}
+                  <Route path="*" element={<NotFound />} />
                 </Route>
-                
-                {/* Employee Routes */}
-                <Route path="/employee" element={<EmployeeRoute><AppLayout /></EmployeeRoute>}>
-                  <Route path="dashboard" element={<EmployeeDashboard />} />
-                  <Route path="profile" element={<Profile />} />
-                  <Route path="leave" element={<LeaveManagement />} />
-                  <Route path="attendance" element={<Attendance />} />
-                  <Route path="payroll" element={<Payroll />} />
-                  <Route path="performance" element={<Performance />} />
-                  <Route path="documents" element={<Documents />} />
-                  <Route path="settings" element={<Settings />} />
-                </Route>
-                
-                {/* Contact Us route */}
-                <Route path="/contact" element={<Contact />} />
-                
-                {/* Catch-all route */}
-                <Route path="*" element={<NotFound />} />
               </Routes>
             </AuthProvider>
           </BrowserRouter>

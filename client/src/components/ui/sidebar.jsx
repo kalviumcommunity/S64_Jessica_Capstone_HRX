@@ -65,19 +65,27 @@ export const Sidebar = ({ className, children, ...props }) => {
   );
 };
 
-export const SidebarHeader = ({ className, ...props }) => {
+export const SidebarHeader = ({ className, children, ...props }) => {
   const { expanded } = useSidebar();
   
   return (
     <div
       className={cn(
-        "flex h-14 items-center border-b px-4",
-        expanded ? "justify-between" : "justify-start",
+        "flex h-14 items-center border-b px-4 justify-between gap-2",
         "relative",
         className
       )}
       {...props}
-    />
+    >
+      {/* Logo or left content goes here */}
+      <div className="flex items-center gap-2 h-full">
+        {children}
+      </div>
+      {/* Collapse button on the right, vertically centered */}
+      <div className="flex items-center h-full">
+        <SidebarTrigger />
+      </div>
+    </div>
   );
 };
 
@@ -172,20 +180,14 @@ export const SidebarTrigger = ({ className, ...props }) => {
   return (
     <button
       className={cn(
-        "absolute -right-4 flex h-7 w-7 items-center justify-center",
-        "rounded-full border bg-background shadow-md",
-        "hover:bg-accent hover:text-accent-foreground",
-        "focus:outline-none focus:ring-2 focus:ring-primary",
-        "transition-transform duration-200",
-        expanded ? "rotate-0" : "rotate-180",
-        "top-3.5",
-        "z-50",
+        "flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 border border-gray-300 shadow hover:bg-primary/10 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-200 z-10",
         className
       )}
       onClick={handleClick}
+      title={expanded ? "Collapse sidebar" : "Expand sidebar"}
       {...props}
     >
-      <ChevronLeft className="h-4 w-4" />
+      <ChevronLeft className={cn("h-5 w-5 transition-transform duration-200", expanded ? "rotate-0" : "rotate-180")}/>
     </button>
   );
 };
