@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
-import { auth, signInWithPhone } from '../../firebase';
+import { auth, signInWithPhone } from '../../Firebase';
 import api from '../../services/apiService';
 
 const PhoneAuth = ({ onSuccess }) => {
