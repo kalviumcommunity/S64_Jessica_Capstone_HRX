@@ -5,6 +5,7 @@ const cors = require('cors');
 const path = require('path');
 const compression = require('compression');
 const connectDB = require('./config/db');
+const { generalLimiter } = require('./middleware/rateLimiter');
 
 // Import your route files
 const authRoutes = require('./routes/authRoutes');
@@ -56,6 +57,9 @@ app.use(cors({
   },
   credentials: true
 }));
+
+// Apply general rate limiter to all API routes
+app.use('/api', generalLimiter);
 
 // Routes - restoring the /api prefix
 app.use('/api/auth', authRoutes);
