@@ -20,6 +20,7 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 const contactRoutes = require('./routes/contactRoutes');
+const otpRoutes = require('./routes/otpRoutes');
 
 dotenv.config();
 const app = express();
@@ -70,6 +71,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/otp', otpRoutes);
 
 app.get('/', (req, res) => {
   res.send('HRX API is running...');
