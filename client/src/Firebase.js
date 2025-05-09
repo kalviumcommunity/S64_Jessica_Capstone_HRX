@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithPopup, PhoneAuthProvider, signInWithCredential } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -43,4 +43,22 @@ export const signInWithGoogle = async () => {
   }
 };
 
-export { auth, googleProvider };
+// Phone Sign In function
+export const signInWithPhone = async (phoneNumber, verificationId, otp) => {
+  try {
+    const credential = PhoneAuthProvider.credential(verificationId, otp);
+    const result = await signInWithCredential(auth, credential);
+    // Extract only the necessary user data
+    const userData = {
+      uid: result.user.uid,
+      phoneNumber: result.user.phoneNumber,
+      emailVerified: result.user.emailVerified
+    };
+    return userData;
+  } catch (error) {
+    console.error("Error signing in with phone:", error);
+    throw error;
+  }
+};
+
+export { auth, googleProvider, PhoneAuthProvider };

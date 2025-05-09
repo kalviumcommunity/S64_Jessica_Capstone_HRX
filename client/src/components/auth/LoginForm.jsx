@@ -21,6 +21,7 @@ import { setCredentials } from '@/redux/authSlice';
 import GoogleIcon from '@/components/common/GoogleIcon';
 import { signInWithGoogle } from '@/Firebase';
 import api from '@/services/apiService';
+import PhoneAuth from './PhoneAuth';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -32,6 +33,7 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [loginMethod, setLoginMethod] = useState('email'); // 'email' or 'phone'
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -86,6 +88,33 @@ const LoginForm = () => {
     }
   };
 
+  const handlePhoneAuthSuccess = async (userData) => {
+    try {
+      const response = await api.post('/auth/phone/check', {
+        phoneNumber: userData.phoneNumber,
+        uid: userData.uid,
+      });
+      const data = response.data;
+      if (data && data.role) {
+        localStorage.setItem('hrms_token', data.token);
+        const mergedUser = fetchEmployeeIdAndSetUser
+          ? await fetchEmployeeIdAndSetUser(data, data.token)
+          : data;
+        if (mergedUser.role === 'admin' || mergedUser.role === 'hr') {
+          navigate('/admin/dashboard');
+        } else {
+          navigate('/employee/dashboard');
+        }
+      } else {
+        sessionStorage.setItem('phoneUser', JSON.stringify(userData));
+        navigate('/role-selection');
+      }
+    } catch (error) {
+      console.error('Phone sign-in error:', error);
+      toast.error('Failed to sign in with phone. Please try again.');
+    }
+  };
+
   return (
     <div className="mx-auto w-full max-w-md p-6 bg-white rounded-lg shadow-md">
       <div className="flex flex-col space-y-2 text-center mb-6">
@@ -100,53 +129,76 @@ const LoginForm = () => {
         </Link>
       </div>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="you@example.com" 
-                    {...field} 
-                    type="email"
-                    autoComplete="email"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="••••••••" 
-                    {...field} 
-                    type="password"
-                    autoComplete="current-password"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button 
-            type="submit" 
-            className="w-full bg-hrms-blue hover:bg-blue-700"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Signing in...' : 'Sign in'}
-          </Button>
-        </form>
-      </Form>
+      <div className="flex justify-center space-x-4 mb-6">
+        <Button
+          type="button"
+          variant={loginMethod === 'email' ? 'default' : 'outline'}
+          onClick={() => setLoginMethod('email')}
+          className="flex-1"
+        >
+          Email
+        </Button>
+        <Button
+          type="button"
+          variant={loginMethod === 'phone' ? 'default' : 'outline'}
+          onClick={() => setLoginMethod('phone')}
+          className="flex-1"
+        >
+          Phone
+        </Button>
+      </div>
+
+      {loginMethod === 'email' ? (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="you@example.com" 
+                      {...field} 
+                      type="email"
+                      autoComplete="email"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="••••••••" 
+                      {...field} 
+                      type="password"
+                      autoComplete="current-password"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button 
+              type="submit" 
+              className="w-full bg-hrms-blue hover:bg-blue-700"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Signing in...' : 'Sign in'}
+            </Button>
+          </form>
+        </Form>
+      ) : (
+        <PhoneAuth onSuccess={handlePhoneAuthSuccess} />
+      )}
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">

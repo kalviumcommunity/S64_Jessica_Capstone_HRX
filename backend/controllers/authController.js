@@ -191,3 +191,57 @@ exports.googleCheck = async (req, res) => {
     res.status(500).json({ message: 'Internal server error', details: error.message });
   }
 };
+
+exports.checkPhoneAuth = async (req, res) => {
+  const { phoneNumber, uid } = req.body;
+  try {
+    if (!phoneNumber || !uid) {
+      return res.status(400).json({ message: 'Missing phone number or uid' });
+    }
+
+    // 1. Check if user exists by phone
+    let user = await User.findOne({ phone: phoneNumber });
+
+    // 2. If not, create a new user with a dummy unique email
+    if (!user) {
+      const dummyEmail = `phoneuser+${uid}@yourdomain.com`;
+      user = await User.create({
+        phone: phoneNumber,
+        email: dummyEmail,
+        googleId: uid, // or use a separate field for phone auth UID if you want
+        role: 'employee',
+        name: 'Phone User', // You can update this later
+        password: '', // Not used for phone users
+      });
+
+      // Optionally, create an employee profile
+      const generatedEmployeeId = `EMP-${Date.now()}`;
+      await Employee.create({
+        name: user.name,
+        email: user.email,
+        createdBy: user._id,
+        employeeId: generatedEmployeeId,
+      });
+    }
+
+    // 3. Fetch employee profile if needed
+    let employee = null;
+    if (user.role === 'employee') {
+      employee = await Employee.findOne({ createdBy: user._id });
+    }
+
+    // 4. Return user data and JWT token
+    return res.status(200).json({
+      _id: user._id,
+      name: user.name,
+      phone: user.phone,
+      role: user.role,
+      avatar: user.avatar,
+      employeeProfile: employee,
+      token: generateToken(user._id),
+    });
+  } catch (err) {
+    console.error('Phone auth error:', err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+};
