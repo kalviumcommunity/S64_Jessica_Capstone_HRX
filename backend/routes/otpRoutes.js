@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { sendOTP, verifyOTP } = require('../controllers/otpController');
+const { sensitiveLimiter } = require('../middleware/rateLimiter');
 
 // Middleware to validate request body
 const validateRequestBody = (req, res, next) => {
@@ -14,9 +15,9 @@ const validateRequestBody = (req, res, next) => {
 };
 
 // Route to initiate phone number verification
-router.post('/send', validateRequestBody, sendOTP);
+router.post('/send', sensitiveLimiter, validateRequestBody, sendOTP);
 
 // Route to verify the OTP and get the ID token
-router.post('/verify', validateRequestBody, verifyOTP);
+router.post('/verify', sensitiveLimiter, validateRequestBody, verifyOTP);
 
 module.exports = router; 
