@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Employee = require('../models/Employee');
 const mongoose = require('mongoose');
+const redisClient = require('../config/redisClient');
 
 // Get profile settings
 exports.getProfileSettings = async (req, res) => {
@@ -302,6 +303,29 @@ exports.updatePassword = async (req, res) => {
     await user.save();
     
     res.json({ message: 'Password updated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getSettings = async (req, res) => {
+  const cacheKey = 'settings:global';
+  try {
+    const cached = await redisClient.get(cacheKey);
+    if (cached) return res.json(JSON.parse(cached));
+    const settings = await Settings.findOne();
+    await redisClient.setEx(cacheKey, 600, JSON.stringify(settings));
+    res.json(settings);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.updateSettings = async (req, res) => {
+  try {
+    const settings = await Settings.findOneAndUpdate({}, req.body, { new: true });
+    await redisClient.del('settings:global');
+    res.json(settings);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

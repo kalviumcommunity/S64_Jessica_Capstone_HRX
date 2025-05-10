@@ -1,9 +1,13 @@
 const Employee = require('../models/Employee');
 const User = require('../models/User');
+const redisClient = require('../config/redisClient');
 
 // Get profile data
 exports.getProfile = async (req, res) => {
+  const cacheKey = `profile:${req.user._id}`;
   try {
+    const cached = await redisClient.get(cacheKey);
+    if (cached) return res.json(JSON.parse(cached));
     const userId = req.params.id;
     const user = await User.findById(userId);
     if (!user) {
@@ -20,7 +24,7 @@ exports.getProfile = async (req, res) => {
         });
       }
       // Build profile from Employee
-      return res.json({
+      const profile = {
         personal: {
           name: user.name,
           email: user.email,
@@ -53,10 +57,12 @@ exports.getProfile = async (req, res) => {
           salary: employee.salary || '',
           taxInformation: employee.taxInformation || ''
         }
-      });
+      };
+      await redisClient.setEx(cacheKey, 600, JSON.stringify(profile));
+      return res.json(profile);
     } else {
       // HR/admin: Build profile from User
-      return res.json({
+      const profile = {
         personal: {
           name: user.name,
           email: user.email,
@@ -89,7 +95,9 @@ exports.getProfile = async (req, res) => {
           salary: user.salary || '',
           taxInformation: user.taxInformation || ''
         }
-      });
+      };
+      await redisClient.setEx(cacheKey, 600, JSON.stringify(profile));
+      return res.json(profile);
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -117,6 +125,7 @@ exports.updatePersonalInfo = async (req, res) => {
       user.emergencyContact = emergencyContact;
       user.emergencyPhone = emergencyPhone;
       await user.save();
+      await redisClient.del(`profile:${userId}`);
       return res.json({ message: 'Personal information updated successfully (user)' });
     }
     await user.save();
@@ -136,6 +145,7 @@ exports.updatePersonalInfo = async (req, res) => {
     employee.emergencyContact = emergencyContact;
     employee.emergencyPhone = emergencyPhone;
     await employee.save();
+    await redisClient.del(`profile:${userId}`);
     res.json({ message: 'Personal information updated successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -164,6 +174,7 @@ exports.updateProfessionalInfo = async (req, res) => {
       user.education = education;
       user.skills = skills;
       await user.save();
+      await redisClient.del(`profile:${userId}`);
       return res.json({ message: 'Professional information updated successfully (user)' });
     }
     // Update employee data or create if it doesn't exist
@@ -185,6 +196,7 @@ exports.updateProfessionalInfo = async (req, res) => {
     employee.education = education;
     employee.skills = skills;
     await employee.save();
+    await redisClient.del(`profile:${userId}`);
     res.json({ message: 'Professional information updated successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -229,6 +241,7 @@ exports.updateBankInfo = async (req, res) => {
       employee.taxInformation = taxInformation;
       try {
         await employee.save();
+        await redisClient.del(`profile:${userId}`);
         res.json({ message: 'Bank information updated successfully' });
       } catch (error) {
         console.error('Error saving employee:', error);
@@ -246,6 +259,7 @@ exports.updateBankInfo = async (req, res) => {
       user.taxInformation = taxInformation;
       try {
         await user.save();
+        await redisClient.del(`profile:${userId}`);
         res.json({ message: 'Bank information updated successfully (HR)' });
       } catch (error) {
         console.error('Error saving HR user:', error);
@@ -295,10 +309,37 @@ exports.uploadAvatar = async (req, res) => {
     user.avatar = req.file.path;
     await user.save();
     
+    await redisClient.del(`profile:${userId}`);
     res.json({ 
       message: 'Avatar uploaded successfully',
       avatarUrl: req.file.path
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get profile by ID
+exports.getProfileById = async (req, res) => {
+  const cacheKey = `profile:${req.params.id}`;
+  try {
+    const cached = await redisClient.get(cacheKey);
+    if (cached) return res.json(JSON.parse(cached));
+    const profile = await Profile.findById(req.params.id);
+    if (!profile) return res.status(404).json({ message: 'Profile not found' });
+    await redisClient.setEx(cacheKey, 600, JSON.stringify(profile));
+    res.json(profile);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Invalidate cache on update
+exports.updateProfile = async (req, res) => {
+  try {
+    const profile = await Profile.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    await redisClient.del(`profile:${req.params.id}`);
+    res.json(profile);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -1,5 +1,6 @@
 const Performance = require('../models/Performance');
 const Employee = require('../models/Employee');
+const redisClient = require('../config/redisClient');
 
 // Get employee performance
 exports.getEmployeePerformance = async (req, res) => {
@@ -205,6 +206,66 @@ exports.getReviewTemplates = async (req, res) => {
   try {
     // For demo, return empty array
     res.json([]);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getAllPerformance = async (req, res) => {
+  const cacheKey = 'performance:list';
+  try {
+    const cached = await redisClient.get(cacheKey);
+    if (cached) return res.json(JSON.parse(cached));
+    const performance = await Performance.find();
+    await redisClient.setEx(cacheKey, 600, JSON.stringify(performance));
+    res.json(performance);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getPerformanceById = async (req, res) => {
+  const cacheKey = `performance:${req.params.id}`;
+  try {
+    const cached = await redisClient.get(cacheKey);
+    if (cached) return res.json(JSON.parse(cached));
+    const performance = await Performance.findById(req.params.id);
+    if (!performance) return res.status(404).json({ message: 'Performance not found' });
+    await redisClient.setEx(cacheKey, 600, JSON.stringify(performance));
+    res.json(performance);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Invalidate cache on add, update, or delete
+exports.addPerformance = async (req, res) => {
+  try {
+    const performance = await Performance.create(req.body);
+    await redisClient.del('performance:list');
+    res.status(201).json(performance);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.updatePerformance = async (req, res) => {
+  try {
+    const performance = await Performance.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    await redisClient.del('performance:list');
+    await redisClient.del(`performance:${req.params.id}`);
+    res.json(performance);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deletePerformance = async (req, res) => {
+  try {
+    const performance = await Performance.findByIdAndDelete(req.params.id);
+    await redisClient.del('performance:list');
+    await redisClient.del(`performance:${req.params.id}`);
+    res.json({ message: 'Performance deleted', performance });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

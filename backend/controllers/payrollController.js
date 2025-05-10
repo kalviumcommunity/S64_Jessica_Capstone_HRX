@@ -4,6 +4,7 @@ const User = require('../models/User');
 const generatePayslip = require('../utils/payslipGenerator');
 const path = require('path');
 const fs = require('fs');
+const redisClient = require('../config/redisClient');
 
 // Get current payroll for employee
 exports.getCurrentPayroll = async (req, res) => {
@@ -237,8 +238,12 @@ exports.generatePayroll = async (req, res) => {
 
 // View all payrolls (HR/Admin)
 exports.getAllPayrolls = async (req, res) => {
+  const cacheKey = 'payrolls:list';
   try {
+    const cached = await redisClient.get(cacheKey);
+    if (cached) return res.json(JSON.parse(cached));
     const payrolls = await Payroll.find().populate('employee');
+    await redisClient.setEx(cacheKey, 3600, JSON.stringify(payrolls));
     res.json(payrolls);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -269,6 +274,7 @@ exports.getEmployeePayroll = async (req, res) => {
 exports.markAsPaid = async (req, res) => {
   try {
     const payroll = await Payroll.findByIdAndUpdate(req.params.id, { status: 'Paid' }, { new: true });
+    await redisClient.del('payrolls:list');
     res.json(payroll);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -568,5 +574,16 @@ exports.updatePayrollSettings = async (req, res) => {
   } catch (error) {
     console.error('Error updating payroll settings:', error);
     res.status(500).json({ message: 'Failed to update payroll settings' });
+  }
+};
+
+// Invalidate cache on create/update
+exports.createPayroll = async (req, res) => {
+  try {
+    const payroll = await Payroll.create(req.body);
+    await redisClient.del('payrolls:list');
+    res.status(201).json(payroll);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
