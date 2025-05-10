@@ -1,5 +1,6 @@
 const Leave = require('../models/Leave');
 const Employee = require('../models/Employee');
+const redisClient = require('../config/redisClient');
 
 // Get leave balance
 exports.getLeaveBalance = async (req, res) => {
@@ -45,6 +46,7 @@ exports.applyLeave = async (req, res) => {
       employee: employee._id, // Set the employee reference
       requestedBy: req.user._id
     });
+    await redisClient.del('leaves:list');
     res.status(201).json(leave);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -53,11 +55,15 @@ exports.applyLeave = async (req, res) => {
 
 // Get all leave requests (Admin/HR)
 exports.getAllLeaves = async (req, res) => {
+  const cacheKey = 'leaves:list';
   try {
+    const cached = await redisClient.get(cacheKey);
+    if (cached) return res.json(JSON.parse(cached));
     const leaves = await Leave.find()
       .populate('employee')
       .populate('requestedBy')
       .populate('reviewedBy');
+    await redisClient.setEx(cacheKey, 600, JSON.stringify(leaves));
     res.json(leaves);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -98,7 +104,31 @@ exports.updateLeaveStatus = async (req, res) => {
       { status, reviewedBy: req.user._id },
       { new: true }
     );
+    await redisClient.del('leaves:list');
     res.json(leave);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getLeaves = async (req, res) => {
+  const cacheKey = 'leaves:list';
+  try {
+    const cached = await redisClient.get(cacheKey);
+    if (cached) return res.json(JSON.parse(cached));
+    const leaves = await Leave.find();
+    await redisClient.setEx(cacheKey, 600, JSON.stringify(leaves));
+    res.json(leaves);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.createLeave = async (req, res) => {
+  try {
+    const leave = await Leave.create(req.body);
+    await redisClient.del('leaves:list');
+    res.status(201).json(leave);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

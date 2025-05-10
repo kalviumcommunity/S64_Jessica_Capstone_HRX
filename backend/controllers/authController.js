@@ -3,6 +3,7 @@ const Employee = require('../models/Employee');
 const jwt = require('jsonwebtoken');
 const NodeCache = require('node-cache');
 const bcrypt = require('bcryptjs');
+const redisClient = require('../config/redisClient');
 
 // Initialize cache with 5-minute TTL
 const cache = new NodeCache({ stdTTL: 300, checkperiod: 120 });
@@ -107,43 +108,40 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
-
   try {
     const cacheKey = `user:${email}`;
-    let user = cache.get(cacheKey);
-
-    if (!user) {
+    let user = null;
+    const cachedUser = await redisClient.get(cacheKey);
+    if (cachedUser) {
+      user = JSON.parse(cachedUser);
+    } else {
       user = await User.findOne({ email })
         .select('_id name email role avatar password')
         .lean();
-
       if (user) {
-        cache.set(cacheKey, user);
+        await redisClient.setEx(cacheKey, 300, JSON.stringify(user));
       }
     }
-
     if (user && await bcrypt.compare(password, user.password)) {
       const employeeCacheKey = `employee:${user._id}`;
-      let employee = cache.get(employeeCacheKey);
-
-      if (!employee) {
+      let employee = null;
+      const cachedEmployee = await redisClient.get(employeeCacheKey);
+      if (cachedEmployee) {
+        employee = JSON.parse(cachedEmployee);
+      } else {
         employee = await Employee.findOne({ createdBy: user._id })
           .select('_id name email position department')
           .lean();
-
         if (employee) {
-          cache.set(employeeCacheKey, employee);
+          await redisClient.setEx(employeeCacheKey, 300, JSON.stringify(employee));
         }
       }
-
       delete user.password;
-
       const response = {
         ...user,
         employeeProfile: employee,
         token: generateToken(user._id),
       };
-
       res.json(response);
     } else {
       res.status(401).json({ message: 'Invalid email or password' });

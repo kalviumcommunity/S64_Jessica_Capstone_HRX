@@ -1,4 +1,5 @@
 const Attendance = require('../models/Attendence');
+const redisClient = require('../config/redisClient');
 
 // Mark check-in
 exports.checkIn = async (req, res) => {
@@ -68,6 +69,66 @@ exports.getAllAttendance = async (req, res) => {
     res.json(all);
   } catch (error) {
     console.error('Error fetching attendance:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getAttendance = async (req, res) => {
+  const cacheKey = 'attendance:list';
+  try {
+    const cached = await redisClient.get(cacheKey);
+    if (cached) return res.json(JSON.parse(cached));
+    const attendance = await Attendance.find();
+    await redisClient.setEx(cacheKey, 600, JSON.stringify(attendance));
+    res.json(attendance);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getAttendanceById = async (req, res) => {
+  const cacheKey = `attendance:${req.params.id}`;
+  try {
+    const cached = await redisClient.get(cacheKey);
+    if (cached) return res.json(JSON.parse(cached));
+    const attendance = await Attendance.findById(req.params.id);
+    if (!attendance) return res.status(404).json({ message: 'Attendance not found' });
+    await redisClient.setEx(cacheKey, 600, JSON.stringify(attendance));
+    res.json(attendance);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Invalidate cache on add, update, or delete
+exports.addAttendance = async (req, res) => {
+  try {
+    const attendance = await Attendance.create(req.body);
+    await redisClient.del('attendance:list');
+    res.status(201).json(attendance);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.updateAttendance = async (req, res) => {
+  try {
+    const attendance = await Attendance.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    await redisClient.del('attendance:list');
+    await redisClient.del(`attendance:${req.params.id}`);
+    res.json(attendance);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deleteAttendance = async (req, res) => {
+  try {
+    const attendance = await Attendance.findByIdAndDelete(req.params.id);
+    await redisClient.del('attendance:list');
+    await redisClient.del(`attendance:${req.params.id}`);
+    res.json({ message: 'Attendance deleted', attendance });
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
