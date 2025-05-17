@@ -180,7 +180,7 @@ export const SidebarTrigger = ({ className, ...props }) => {
   return (
     <button
       className={cn(
-        "flex items-center justify-center h-8 w-8 rounded-full bg-gray-100 border border-gray-300 shadow hover:bg-primary/10 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-200 z-10",
+        "flex items-center justify-center h-8 w-8 rounded-full bg-card border border-border shadow hover:bg-primary/10 hover:text-primary text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-200 z-10",
         className
       )}
       onClick={handleClick}

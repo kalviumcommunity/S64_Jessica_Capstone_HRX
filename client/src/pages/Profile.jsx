@@ -24,6 +24,7 @@ import {
   Landmark,
   Loader2
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const Profile = () => {
   const { user } = useAuth();
@@ -298,7 +299,7 @@ const Profile = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="bg-white shadow-md rounded-lg p-6">
+      <div className="bg-card shadow-md rounded-lg p-6">
         <div className="flex flex-col md:flex-row md:items-center gap-6 mb-6">
           <div className="flex flex-col items-center">
             <Avatar className="h-24 w-24">
@@ -321,7 +322,13 @@ const Profile = () => {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="cursor-pointer"
+                  className={cn(
+                    "cursor-pointer",
+                    {
+                      "bg-card border border-border shadow hover:bg-primary/10 hover:text-primary text-foreground focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-200 z-10": !isUploadingAvatar,
+                      "bg-primary/10 text-primary": isUploadingAvatar
+                    }
+                  )}
                   disabled={isUploadingAvatar}
                   onClick={() => document.getElementById('avatar-upload').click()}
                 >
@@ -344,9 +351,9 @@ const Profile = () => {
             </div>
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">{user?.name}</h1>
-            <p className="text-gray-600">{user?.email}</p>
-            <p className="text-gray-600 capitalize">{user?.role} at HRX</p>
+            <h1 className="text-2xl font-bold text-foreground">{user?.name}</h1>
+            <p className="text-muted-foreground">{user?.email}</p>
+            <p className="text-muted-foreground capitalize">{user?.role} at HRX</p>
           </div>
         </div>
 
@@ -370,10 +377,11 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="name">Full Name</Label>
                     <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="name"
                         name="name"
+                        placeholder="Full Name"
                         value={personalInfo.name}
                         onChange={handlePersonalInfoChange}
                         className="pl-10"
@@ -384,10 +392,11 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="email"
                         name="email"
+                        placeholder="Email Address"
                         type="email"
                         value={personalInfo.email}
                         onChange={handlePersonalInfoChange}
@@ -399,10 +408,11 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                      <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="phone"
                         name="phone"
+                        placeholder="Phone Number"
                         value={personalInfo.phone}
                         onChange={handlePersonalInfoChange}
                         className="pl-10"
@@ -413,7 +423,7 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="dateOfBirth">Date of Birth</Label>
                     <div className="relative">
-                      <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                      <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="dateOfBirth"
                         name="dateOfBirth"
@@ -431,10 +441,11 @@ const Profile = () => {
                 <div className="space-y-2">
                   <Label htmlFor="address">Address</Label>
                   <div className="relative">
-                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="address"
                       name="address"
+                      placeholder="Address"
                       value={personalInfo.address}
                       onChange={handlePersonalInfoChange}
                       className="pl-10"
@@ -458,10 +469,11 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="emergencyPhone">Emergency Phone</Label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                      <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="emergencyPhone"
                         name="emergencyPhone"
+                        placeholder="Emergency Contact Phone"
                         value={personalInfo.emergencyPhone}
                         onChange={handlePersonalInfoChange}
                         className="pl-10"
@@ -497,10 +509,11 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="department">Department</Label>
                     <div className="relative">
-                      <Building className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                      <Building className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="department"
                         name="department"
+                        placeholder="Department"
                         value={professionalInfo.department}
                         onChange={handleProfessionalInfoChange}
                         className="pl-10"
@@ -511,10 +524,11 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="position">Position</Label>
                     <div className="relative">
-                      <Briefcase className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                      <Briefcase className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="position"
                         name="position"
+                        placeholder="Position"
                         value={professionalInfo.position}
                         onChange={handleProfessionalInfoChange}
                         className="pl-10"
@@ -535,7 +549,7 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="joinDate">Join Date</Label>
                     <div className="relative">
-                      <Calendar className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                      <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="joinDate"
                         name="joinDate"
@@ -564,10 +578,11 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="workLocation">Work Location</Label>
                     <div className="relative">
-                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="workLocation"
                         name="workLocation"
+                        placeholder="Work Location"
                         value={professionalInfo.workLocation}
                         onChange={handleProfessionalInfoChange}
                         className="pl-10"
@@ -582,10 +597,11 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="workEmail">Work Email</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="workEmail"
                         name="workEmail"
+                        placeholder="Work Email"
                         type="email"
                         value={professionalInfo.workEmail}
                         onChange={handleProfessionalInfoChange}
@@ -597,10 +613,11 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="workPhone">Work Phone</Label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                      <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="workPhone"
                         name="workPhone"
+                        placeholder="Work Phone"
                         value={professionalInfo.workPhone}
                         onChange={handleProfessionalInfoChange}
                         className="pl-10"
@@ -614,10 +631,11 @@ const Profile = () => {
                 <div className="space-y-2">
                   <Label htmlFor="education">Education</Label>
                   <div className="relative">
-                    <GraduationCap className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                    <GraduationCap className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="education"
                       name="education"
+                      placeholder="Education"
                       value={professionalInfo.education}
                       onChange={handleProfessionalInfoChange}
                       className="pl-10"
@@ -662,10 +680,11 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="accountName">Account Name</Label>
                     <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="accountName"
                         name="accountName"
+                        placeholder="Account Holder Name"
                         value={bankInfo.accountName}
                         onChange={handleBankInfoChange}
                         className="pl-10"
@@ -676,10 +695,11 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="accountNumber">Account Number</Label>
                     <div className="relative">
-                      <CreditCard className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                      <CreditCard className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="accountNumber"
                         name="accountNumber"
+                        placeholder="Account Number"
                         value={bankInfo.accountNumber}
                         onChange={handleBankInfoChange}
                         className="pl-10"
@@ -690,10 +710,11 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="bankName">Bank Name</Label>
                     <div className="relative">
-                      <Landmark className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                      <Landmark className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="bankName"
                         name="bankName"
+                        placeholder="Bank Name"
                         value={bankInfo.bankName}
                         onChange={handleBankInfoChange}
                         className="pl-10"
@@ -742,10 +763,11 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="salary">Salary</Label>
                     <div className="relative">
-                      <Wallet className="absolute left-3 top-3 h-4 w-4 text-gray-500" />
+                      <Wallet className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="salary"
                         name="salary"
+                        placeholder="Salary"
                         value={bankInfo.salary}
                         onChange={handleBankInfoChange}
                         className="pl-10"

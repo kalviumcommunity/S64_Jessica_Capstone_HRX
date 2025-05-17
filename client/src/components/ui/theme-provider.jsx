@@ -31,15 +31,18 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = window.document.documentElement;
+    const html = document.querySelector('html');
     
     // Add transition class for smooth switching
     root.classList.add('transition-colors', 'duration-300');
     
-    // Remove the old theme class
-    root.classList.remove(theme === "dark" ? "light" : "dark");
+    // Remove both theme classes first
+    root.classList.remove('light', 'dark');
+    html?.classList.remove('light', 'dark');
     
     // Add the new theme class
     root.classList.add(theme);
+    html?.classList.add(theme);
     
     // Store the theme in localStorage
     localStorage.setItem(storageKey, theme);
