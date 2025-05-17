@@ -104,7 +104,7 @@ const PhoneAuth = ({ onSuccess }) => {
             {!verificationId ? (
                 <form onSubmit={handleSendOTP} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-foreground">
                             Phone Number
                         </label>
                         <input
@@ -112,12 +112,12 @@ const PhoneAuth = ({ onSuccess }) => {
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
                             placeholder="+1234567890"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            className="mt-1 block w-full rounded-md border border-border bg-input text-foreground shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             required
                         />
                     </div>
                     
-                    <div id="recaptcha-container" className="mb-4"></div>
+                    <div id="recaptcha-container" className="mb-4 bg-card rounded"></div>
                     
                     <button
                         type="submit"
@@ -130,7 +130,7 @@ const PhoneAuth = ({ onSuccess }) => {
             ) : (
                 <form onSubmit={handleVerifyOTP} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-foreground">
                             Enter OTP
                         </label>
                         <input
@@ -138,7 +138,7 @@ const PhoneAuth = ({ onSuccess }) => {
                             value={otp}
                             onChange={(e) => setOtp(e.target.value)}
                             placeholder="Enter 6-digit OTP"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            className="mt-1 block w-full rounded-md border border-border bg-input text-foreground shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             required
                         />
                     </div>

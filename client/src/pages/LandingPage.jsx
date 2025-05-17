@@ -43,7 +43,7 @@ const LandingPage = () => {
       {/* Hero Section */}
       <section 
         id="hero" 
-        className="relative bg-gradient-to-br from-white to-secondary py-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
+        className="relative bg-gradient-to-br from-background to-secondary py-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
       >
         <motion.div 
           className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none z-0"
@@ -58,7 +58,7 @@ const LandingPage = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <motion.h1 
-              className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 leading-tight"
+              className="text-4xl sm:text-5xl md:text-6xl font-bold text-foreground leading-tight"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
@@ -71,7 +71,7 @@ const LandingPage = () => {
               >Simplifying HR.</motion.span>
             </motion.h1>
             <motion.p 
-              className="mt-6 text-xl text-gray-600 max-w-xl"
+              className="mt-6 text-xl text-muted-foreground max-w-xl"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
@@ -140,7 +140,7 @@ const LandingPage = () => {
       {/* Key Features Section */}
       <section 
         id="features" 
-        className="py-20 px-4 bg-white sm:px-6 lg:px-8"
+        className="py-20 px-4 bg-background sm:px-6 lg:px-8"
       >
         <div className="max-w-7xl mx-auto">
           <motion.div 
@@ -150,8 +150,8 @@ const LandingPage = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Key Features</h2>
-            <p className="mt-4 text-xl text-gray-600 max-w-xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">Key Features</h2>
+            <p className="mt-4 text-xl text-muted-foreground max-w-xl mx-auto">
               Everything you need to streamline your HR operations
             </p>
           </motion.div>
@@ -205,7 +205,7 @@ const LandingPage = () => {
       {/* Role-Based Access Section */}
       <section 
         id="roles" 
-        className="py-20 px-4 bg-gray-50 sm:px-6 lg:px-8"
+        className="py-20 px-4 bg-background sm:px-6 lg:px-8"
       >
         <div className="max-w-7xl mx-auto">
           <motion.div 
@@ -215,8 +215,8 @@ const LandingPage = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Role-Based Access</h2>
-            <p className="mt-4 text-xl text-gray-600 max-w-xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">Role-Based Access</h2>
+            <p className="mt-4 text-xl text-muted-foreground max-w-xl mx-auto">
               Tailored experiences for every role in your organization
             </p>
           </motion.div>
@@ -233,11 +233,11 @@ const LandingPage = () => {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <div className="bg-card rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div className="p-8">
                   <div className="flex items-center mb-6">
                     <UsersIcon className="h-10 w-10 text-primary mr-4" />
-                    <h3 className="text-2xl font-bold text-gray-900">Admin/HR Dashboard</h3>
+                    <h3 className="text-2xl font-bold text-foreground">Admin/HR Dashboard</h3>
                   </div>
                   <ul className="space-y-4">
                     <AccessItem text="Add, edit, and delete users" />
@@ -248,7 +248,7 @@ const LandingPage = () => {
                     <AccessItem text="Set company policies" />
                   </ul>
                   <motion.div 
-                    className="mt-8 bg-gray-50 p-4 rounded-lg"
+                    className="mt-8 bg-background p-4 rounded-lg"
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.3 }}
                   >
@@ -266,11 +266,11 @@ const LandingPage = () => {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <div className="bg-card rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div className="p-8">
                   <div className="flex items-center mb-6">
                     <UserIcon className="h-10 w-10 text-primary mr-4" />
-                    <h3 className="text-2xl font-bold text-gray-900">Employee Dashboard</h3>
+                    <h3 className="text-2xl font-bold text-foreground">Employee Dashboard</h3>
                   </div>
                   <ul className="space-y-4">
                     <AccessItem text="View and update personal profile" />
@@ -281,7 +281,7 @@ const LandingPage = () => {
                     <AccessItem text="Access company resources" />
                   </ul>
                   <motion.div 
-                    className="mt-8 bg-gray-50 p-4 rounded-lg"
+                    className="mt-8 bg-background p-4 rounded-lg"
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.3 }}
                   >
@@ -301,7 +301,7 @@ const LandingPage = () => {
       {/* How It Works Section */}
       <section 
         id="howitworks" 
-        className="py-20 px-4 bg-white sm:px-6 lg:px-8"
+        className="py-20 px-4 bg-background sm:px-6 lg:px-8"
       >
         <div className="max-w-7xl mx-auto">
           <motion.div 
@@ -311,8 +311,8 @@ const LandingPage = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">How It Works</h2>
-            <p className="mt-4 text-xl text-gray-600 max-w-xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">How It Works</h2>
+            <p className="mt-4 text-xl text-muted-foreground max-w-xl mx-auto">
               Get started with HRX in three simple steps
             </p>
           </motion.div>
@@ -373,7 +373,7 @@ const LandingPage = () => {
       {/* Why Choose HRX */}
       <section 
         id="whyhrx" 
-        className="py-20 px-4 bg-gray-50 sm:px-6 lg:px-8"
+        className="py-20 px-4 bg-background sm:px-6 lg:px-8"
       >
         <div className="max-w-7xl mx-auto">
           <motion.div 
@@ -383,8 +383,8 @@ const LandingPage = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Why Choose HRX</h2>
-            <p className="mt-4 text-xl text-gray-600 max-w-xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">Why Choose HRX</h2>
+            <p className="mt-4 text-xl text-muted-foreground max-w-xl mx-auto">
               Modern solutions for modern workplaces
             </p>
           </motion.div>
@@ -401,7 +401,7 @@ const LandingPage = () => {
               whileHover={{ scale: 1.02, y: -5 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="bg-card p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="flex items-start">
                   <motion.div 
                     className="bg-primary rounded-full p-2 mr-4"
@@ -411,8 +411,8 @@ const LandingPage = () => {
                     <CheckIcon className="h-6 w-6 text-white" />
                   </motion.div>
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Secure Authentication</h3>
-                    <p className="text-gray-600">JWT authentication and Google OAuth integration for maximum security.</p>
+                    <h3 className="text-xl font-semibold text-foreground mb-2">Secure Authentication</h3>
+                    <p className="text-muted-foreground">JWT authentication and Google OAuth integration for maximum security.</p>
                   </div>
                 </div>
               </div>
@@ -423,7 +423,7 @@ const LandingPage = () => {
               whileHover={{ scale: 1.02, y: -5 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="bg-card p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="flex items-start">
                   <motion.div 
                     className="bg-primary rounded-full p-2 mr-4"
@@ -433,8 +433,8 @@ const LandingPage = () => {
                     <CheckIcon className="h-6 w-6 text-white" />
                   </motion.div>
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Fully Responsive Interface</h3>
-                    <p className="text-gray-600">Access HRX from any device - desktop, tablet, or mobile phone.</p>
+                    <h3 className="text-xl font-semibold text-foreground mb-2">Fully Responsive Interface</h3>
+                    <p className="text-muted-foreground">Access HRX from any device - desktop, tablet, or mobile phone.</p>
                   </div>
                 </div>
               </div>
@@ -445,7 +445,7 @@ const LandingPage = () => {
               whileHover={{ scale: 1.02, y: -5 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="bg-card p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="flex items-start">
                   <motion.div 
                     className="bg-primary rounded-full p-2 mr-4"
@@ -455,8 +455,8 @@ const LandingPage = () => {
                     <CheckIcon className="h-6 w-6 text-white" />
                   </motion.div>
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Modern Tech Stack</h3>
-                    <p className="text-gray-600">Built with React, Tailwind CSS, and Node.js for optimal performance.</p>
+                    <h3 className="text-xl font-semibold text-foreground mb-2">Modern Tech Stack</h3>
+                    <p className="text-muted-foreground">Built with React, Tailwind CSS, and Node.js for optimal performance.</p>
                   </div>
                 </div>
               </div>
@@ -467,7 +467,7 @@ const LandingPage = () => {
               whileHover={{ scale: 1.02, y: -5 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="bg-card p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div className="flex items-start">
                   <motion.div 
                     className="bg-primary rounded-full p-2 mr-4"
@@ -477,8 +477,8 @@ const LandingPage = () => {
                     <CheckIcon className="h-6 w-6 text-white" />
                   </motion.div>
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Designed for Scalability</h3>
-                    <p className="text-gray-600">Grows with your organization from startups to enterprise-level businesses.</p>
+                    <h3 className="text-xl font-semibold text-foreground mb-2">Designed for Scalability</h3>
+                    <p className="text-muted-foreground">Grows with your organization from startups to enterprise-level businesses.</p>
                   </div>
                 </div>
               </div>
@@ -490,7 +490,7 @@ const LandingPage = () => {
       {/* Testimonials Section */}
       <section 
         id="testimonials" 
-        className="py-20 px-4 bg-white sm:px-6 lg:px-8"
+        className="py-20 px-4 bg-background sm:px-6 lg:px-8"
       >
         <div className="max-w-7xl mx-auto">
           <motion.div 
@@ -500,8 +500,8 @@ const LandingPage = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">What Our Clients Say</h2>
-            <p className="mt-4 text-xl text-gray-600 max-w-xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">What Our Clients Say</h2>
+            <p className="mt-4 text-xl text-muted-foreground max-w-xl mx-auto">
               Join hundreds of satisfied companies using HRX
             </p>
           </motion.div>
@@ -540,7 +540,7 @@ const LandingPage = () => {
 
       {/* CTA Section */}
       <section 
-        className="py-20 px-4 bg-primary sm:px-6 lg:px-8"
+        className="py-20 px-4 bg-primary dark:bg-[#0e7c6b] sm:px-6 lg:px-8"
       >
         <div className="max-w-7xl mx-auto text-center">
           <motion.h2 
@@ -573,7 +573,7 @@ const LandingPage = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button className="flex items-center gap-2 bg-white text-primary font-semibold px-8 py-3 rounded-full text-lg shadow-lg transition transform hover:scale-105 hover:bg-gradient-to-r hover:from-white hover:to-gray-100 hover:shadow-xl">
+                <Button className="flex items-center gap-2 bg-white text-primary font-semibold px-8 py-3 rounded-full text-lg shadow-lg transition transform hover:scale-105 hover:bg-primary/10 hover:text-primary-foreground hover:shadow-xl dark:bg-card dark:text-foreground dark:border dark:border-border">
                   <LogInIcon size={20} />
                   Login Now
                 </Button>
@@ -584,7 +584,7 @@ const LandingPage = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button className="flex items-center gap-2 border-2 border-white text-white font-semibold px-8 py-3 rounded-full text-lg bg-transparent transition transform hover:scale-105 hover:bg-white hover:text-primary hover:shadow-xl">
+                <Button className="flex items-center gap-2 border-2 border-white text-white font-semibold px-8 py-3 rounded-full text-lg bg-transparent transition transform hover:scale-105 hover:bg-white hover:text-primary hover:shadow-xl dark:border-border dark:text-foreground dark:hover:bg-card dark:hover:text-foreground">
                   Contact Us
                 </Button>
               </motion.div>
@@ -595,7 +595,7 @@ const LandingPage = () => {
 
       {/* Footer */}
       <footer 
-        className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8"
+        className="bg-background text-foreground py-12 px-4 sm:px-6 lg:px-8 border-t border-border"
       >
         <div className="max-w-7xl mx-auto">
           <motion.div 
@@ -613,7 +613,7 @@ const LandingPage = () => {
                 <span className="text-2xl font-bold">HR</span>
                 <span className="text-2xl font-bold text-primary">X</span>
               </div>
-              <p className="mt-2 text-gray-400">Empowering workplaces. Simplifying HR.</p>
+              <p className="mt-2 text-muted-foreground">Empowering workplaces. Simplifying HR.</p>
             </motion.div>
             <motion.div 
               className="flex flex-wrap gap-8"
@@ -623,19 +623,19 @@ const LandingPage = () => {
                 <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
                 <ul className="space-y-2">
                   <li>
-                    <a href="#hero" className="text-gray-400 hover:text-white transition-colors">Home</a>
+                    <a href="#hero" className="text-muted-foreground hover:text-primary transition-colors">Home</a>
                   </li>
                   <li>
-                    <a href="#features" className="text-gray-400 hover:text-white transition-colors">Features</a>
+                    <a href="#features" className="text-muted-foreground hover:text-primary transition-colors">Features</a>
                   </li>
                   <li>
-                    <a href="#roles" className="text-gray-400 hover:text-white transition-colors">Access</a>
+                    <a href="#roles" className="text-muted-foreground hover:text-primary transition-colors">Access</a>
                   </li>
                   <li>
-                    <a href="#howitworks" className="text-gray-400 hover:text-white transition-colors">How it works</a>
+                    <a href="#howitworks" className="text-muted-foreground hover:text-primary transition-colors">How it works</a>
                   </li>
                   <li>
-                    <a href="#testimonials" className="text-gray-400 hover:text-white transition-colors">Testimonials</a>
+                    <a href="#testimonials" className="text-muted-foreground hover:text-primary transition-colors">Testimonials</a>
                   </li>
                 </ul>
               </div>
@@ -647,7 +647,7 @@ const LandingPage = () => {
                       href="https://www.linkedin.com/in/jessica-agarwal-00b6b7225/"
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-white flex items-center gap-1 transition-colors"
+                      className="text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors"
                       whileHover={{ x: 5 }}
                       transition={{ duration: 0.2 }}
                     >
@@ -660,7 +660,7 @@ const LandingPage = () => {
             </motion.div>
           </motion.div>
           <motion.div 
-            className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400 flex flex-col gap-2"
+            className="border-t border-border mt-12 pt-8 text-center text-muted-foreground flex flex-col gap-2"
             variants={fadeInUp}
             initial="initial"
             whileInView="animate"

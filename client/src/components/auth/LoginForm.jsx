@@ -116,7 +116,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="mx-auto w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+    <div className="mx-auto w-full max-w-md p-6 bg-card text-card-foreground rounded-lg shadow-md">
       <div className="flex flex-col space-y-2 text-center mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
         <p className="text-sm text-muted-foreground">
@@ -205,7 +205,7 @@ const LoginForm = () => {
           <Separator className="w-full" />
         </div>
         <div className="relative flex justify-center text-xs">
-          <span className="bg-white px-2 text-muted-foreground">Or continue with</span>
+          <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
         </div>
       </div>
 
